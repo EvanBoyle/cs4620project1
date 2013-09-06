@@ -1,1 +1,3 @@
-VAR 95ab = 35;
+VAR t = true;
+WHILE t
+	GO 90;
