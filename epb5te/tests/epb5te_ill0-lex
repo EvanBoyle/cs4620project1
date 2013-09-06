@@ -1,0 +1,4 @@
+VAR a = 1;
+VAR b = 2;
+IF a==b
+	GO 100;

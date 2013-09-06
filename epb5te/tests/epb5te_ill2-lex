@@ -1,0 +1,8 @@
+/*
+*This is a c style comment block
+*it will break the lexer
+*lol
+*
+*/
+
+VAR a = tan 30;
