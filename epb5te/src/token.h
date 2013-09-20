@@ -26,6 +26,18 @@
 #define ASSIGN 281
 #define IF 282
 #define WHILE 283
+#define THEN 284
+#define ELSE 285
+#define LESS 286
+#define GREAT 287
+#define LESSE 288
+#define GREATE 289
+#define EQUALS 290
+#define NOTEQUALS 291
+#define OCBRACE 292
+#define CCBRACE 293
+
+
 
 
 
