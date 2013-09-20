@@ -1,0 +1,25 @@
+VAR length;
+VAR angle;
+VAR c;
+VAR double;
+VAR q;
+
+
+length = 100;
+double = 9.09;
+q = sqrt 9;
+angle = 90;
+//this is a comment
+c=30;
+n=50;
+
+FOR i=1 STEP 1 TO n DO
+BEGIN
+  TURN angle;
+  c=200*i/n;
+  GO c;
+  TURN c*300/n;
+END
+
+JUMP (c-n)*2;
+

@@ -1,0 +1,6 @@
+FOR i=1 STEP 1 TO n DO
+  TURN angle;
+  c=200*i/n;
+  GO c;
+  TURN c*300/n;
+END
