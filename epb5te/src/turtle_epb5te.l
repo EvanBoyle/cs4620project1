@@ -11,7 +11,7 @@
 
 FORWARD         return GO;
 SWERVE          return TURN; 
-ELEMENT         return VAR;
+ELEMENT         return ELEMENT;
 LEAP            return JUMP;
 IF		return IF;
 WHILE		return WHILE;

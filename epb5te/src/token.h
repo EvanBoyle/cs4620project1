@@ -2,7 +2,7 @@
 /* Tokens.  */
 #define GO 258
 #define TURN 259
-#define VAR 260
+#define ELEMENT 260
 #define JUMP 261
 #define FOR 262
 #define STEP 263
