@@ -2,7 +2,7 @@
 /* Tokens.  */
 #define GO 258
 #define TURN 259
-#define ELEMENT 260
+#define VAR 260
 #define JUMP 261
 #define FOR 262
 #define STEP 263
@@ -25,18 +25,16 @@
 #define CLOSE 280
 #define ASSIGN 281
 #define IF 282
-#define WHILE 283
-#define THEN 284
-#define ELSE 285
-#define LESS 286
-#define GREAT 287
-#define LESSE 288
-#define GREATE 289
-#define EQUALS 290
-#define NOTEQUALS 291
-#define OCBRACE 292
-#define CCBRACE 293
-
+#define ELSE 283
+#define EQUALS 284
+#define NOTEQUALS 285
+#define GREAT 286
+#define GREATE 287
+#define LESS 288
+#define LESSE 289
+#define OCBRACE 290
+#define CCBRACE 291
+#define	WHILE 292
 
 
 
@@ -44,5 +42,5 @@
 typedef union YYSTYPE
 { int i; node *n; double d;}
         YYSTYPE;
-YYSTYPE yylval;
+extern YYSTYPE yylval;
 

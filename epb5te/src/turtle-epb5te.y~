@@ -6,9 +6,9 @@
 
 %union { int i; node *n; double d;}
 
-%token GO TURN VAR JUMP 
-%token EQUALS NOTEQUALS GREAT LESS GREATE LESSE WHILE
-%token ELSE IF  OCBRACE CCBRACE
+%token GO TURN ELEMENT JUMP
+%token WHILE
+%token IF ELSE LESS GREAT LESSE GREATE EQUALS NOTEQUALS OCBRACE CCBRACE
 %token FOR STEP TO DO
 %token COPEN CCLOSE
 %token SIN COS SQRT
@@ -19,9 +19,6 @@
 
 %type <n> decl
 %type <n> decllist
-
-%nonassoc "then"
-%nonassoc "else"
 
 %%
 program: head decllist stmtlist tail;
@@ -37,12 +34,12 @@ tail: { printf("stroke\n"); };
 decllist: ;
 decllist: decllist decl;
 
-decl: VAR ID SEMICOLON { printf("/tlt%s 0 def\n",$2->symbol);} ;
+decl: ELEMENT ID SEMICOLON { printf("/tlt%s 0 def\n",$2->symbol);} ;
+
 
 
 stmtlist: ;
-stmtlist: stmtlist stmt;
-
+stmtlist: stmtlist stmt ;
 
 stmt: ID ASSIGN expr SEMICOLON {printf("/tlt%s exch store\n",$1->symbol);} ;
 stmt: GO expr SEMICOLON {printf("0 rlineto\n");};
@@ -55,27 +52,29 @@ stmt: FOR ID ASSIGN expr
 	  DO {printf("{ /tlt%s exch store\n",$2->symbol);} 
 	     stmt {printf("} for\n");};
 
-stmt: COPEN stmtlist CCLOSE;
-stmt: iestmt;	
-
-
-stmt: WHILE {printf("{ ");}OPEN boolexpr CLOSE  {printf("{} {exit} ifelse ");}OCBRACE stmtlist CCBRACE {printf("}loop \n ");};
-
-istmt: IF OPEN boolexpr {printf("{ ");} CLOSE OCBRACE  stmtlist CCBRACE {printf("}");} 
-	
-
-iestmt: istmt {printf("if \n");}
-	|istmt ELSE {printf("{");}OCBRACE stmtlist {printf("}ifelse \n closepath\n");}CCBRACE;
 
 
 
-boolexpr: expr EQUALS expr {printf("eq ");};
-boolexpr: expr NOTEQUALS expr {printf("ne ");};
-boolexpr: expr LESS expr {printf("lt ");};
-boolexpr: expr LESSE expr {printf("le ");};
-boolexpr: expr GREATE expr {printf("ge ");};
-boolexpr: expr GREAT expr {printf("gt ");};
- 
+//stmnt: WHILE {printf("{");}OPEN boolexpr CLOSE  {printf("{} {exit} ifelse");}OCBRACE stmtlist CCBRACE {printf("}loop \n ");};
+
+//stmnt: IF OPEN boolexpr {printf("{");}CLOSE OCBRACE stmtlist CCBRACE {printf("}if");} ELSE {printf("{");}OCBRACE stmtlist {printf("}elseif");}CCBRACE;
+
+stmt: IF OPEN boolexpr {printf("{");}CLOSE OCBRACE stmtlist {printf("}if");}CCBRACE;
+
+stmt: COPEN stmtlist CCLOSE;	 
+
+boolexpr: expr EQUALS {printf("eq");} 
+		expr 
+	| expr NOTEQUALS {printf("ne");} 
+		expr 
+	| expr LESS {printf("lt");}
+		 expr 
+	| expr LESSE {printf("le");} 
+		expr 
+	| expr GREATE {printf("ge");} 
+		expr 
+	| expr GREAT {printf("gt");} 
+		expr ;
 
 expr: expr PLUS term { printf("add ");};
 expr: expr MINUS term { printf("sub ");};

@@ -1,7 +1,7 @@
 
 %{
 #include "symtab.h"
-#include "token.h"
+#include "turtle-epb5te.tab.h"
 %}
 
 %%
@@ -19,6 +19,17 @@ TO              return TO;
 DO              return DO;
 BEGIN           return COPEN;
 END             return CCLOSE;
+IF		return IF;
+ELSE		return ELSE;
+==		return EQUALS;
+!=		return NOTEQUALS;
+\>		return GREAT;
+\>=		return GREATE; 
+\<		return LESS; 
+\<=		return LESSE; 
+\{		return OCBRACE;
+\}		return CCBRACE;
+WHILE		return WHILE;
 
 sin             return SIN;
 cos             return COS;
@@ -45,3 +56,4 @@ sqrt            return SQRT;
 .               fprintf(stderr,"Unexpected character %c (%2X)\n",yytext[0],yytext[0]);
 
 %%
+
