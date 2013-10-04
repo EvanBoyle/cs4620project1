@@ -1,0 +1,89 @@
+VAR alpha;
+VAR c;
+VAR n;
+VAR i;
+VAR myvar;
+VAR i;
+//found bug should not allot i to be declared twice
+
+JUMP 100;
+TURN 90;
+JUMP 100;
+TURN -90;
+
+
+alpha = 77.77;
+c = 200;
+
+n=50;
+
+FOR i=1 STEP 1 TO n DO
+BEGIN
+  TURN alpha;
+  c=200*i/n;
+  GO c;
+  TURN -alpha-90;
+  GO sin alpha * c;
+  TURN -90;
+  GO cos alpha *c;
+  TURN 180;
+  TURN 2*360/n;
+END
+
+
+
+
+myvar=4;
+
+// should draw a rectangle
+IF(myvar==4) {
+    GO 40;
+    TURN 90;
+    GO 40;
+    TURN 90;
+    GO 40;
+    TURN 90;
+    GO 40;
+    TURN 90;
+}
+
+// reset turtle position
+JUMP 80;
+
+//should take ELSE and draw a triangle
+IF(myvar>=7) {
+IF(myvar<0){
+GO 40;
+}
+GO 40;
+TURN 90;
+GO 40;
+TURN 90;
+GO 40;
+TURN 90;
+GO 40;
+TURN 90;
+} 
+ELSE{
+GO 30;
+TURN 120;
+GO 30;
+TURN 120;
+GO 30;
+TURN 120;
+}
+
+
+
+
+
+//should be eight accending lines
+i=0;
+TURN 90;
+WHILE(i<8) {
+    GO 20;
+    TURN 270;
+    JUMP 5;
+    TURN 90;
+    i=i+1;
+}
