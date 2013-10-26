@@ -39,6 +39,7 @@ void yyerror(const char *msg); // standard error-handling routine
  *      attributes to your non-terminal symbols.
  */
 %union {
+	FieldAccess *field;
 	Call *call;
 	Expr *expr;
 	List<Expr*> *exprList;
@@ -93,6 +94,7 @@ void yyerror(const char *msg); // standard error-handling routine
  * pp2: You'll need to add many of these of your own.
  */
 %type <declList>  DeclList IFnDecls DeclListC DeclListCs  
+%type <field> 		LValue
 %type <call>		Call
 %type <exprList>	Actuals
 %type <expr>		Constants Expr
@@ -218,21 +220,50 @@ VarDecls  : VarDecls VarDecl     { ($$=$1)->Append($2); }
           | /* empty*/           { $$ = new List<VarDecl*>; }
 ;
 
-StmtList  : /* empty, add your grammar */  { $$ = new List<Stmt*>; }
-;
+StmtList  :	 
+		|	/* empty, add your grammar */  { $$ = new List<Stmt*>; }
+;	
+
+
 
 //stmts go here
 
-Expr 	:
+Expr 	:	LValue '=' Expr			{$$ = new AssignExpr($1, new Operator(@2, '='), $3 );}
+		|	Constants					{$$ = $1;}
+		|	LValue					{$$ = $1;}
+		|	T_This					{$$ = new This(@1);}
+		|	Call						{$$ = $1}
+		|	'(' Call ')'				{$$ = $2}
+		|	Expr '+' Expr				{$$ = new ArithmeticExpr($1, new Operator(@2, '+'), $3)}
+		|	Expr '-' Expr				{$$ = new ArithmeticExpr($1, new Operator(@2, '-'), $3)}
+		|	Expr '*' Expr				{$$ = new ArithmeticExpr($1, new Operator(@2, '*'), $3)}
+		|	Expr '/' Expr				{$$ = new ArithmeticExpr($1, new Operator(@2, '/'), $3)}
+		|	Expr '%' Expr				{$$ = new ArithmeticExpr($1, new Operator(@2, '%'), $3)}
+		|	'-' Expr					{$$ = new CompoundExpr(NULL, new Operator(@1, '+'), $2)}
+		|	Expr '<' Expr				{$$ = new RelationalExpr($1, new Operator(@2, '<'), $3)}
+		|	Expr T_LessEqual Expr		{$$ = new RelationalExpr($1, new Operator(@2, "<="), $3)}
+		|	Expr '>' Expr				{$$ = new RelationalExpr($1, new Operator(@2, '>'), $3)}
+		|	Expr T_GreaterEqual Expr		{$$ = new RelationalExpr($1, new Operator(@2, ">="), $3)}
+		|	Expr T_Equal Expr			{$$ = new EqualityExpr($1, new Operator(@2, "=="), $3)}
+		|	Expr T_NotEqual Expr		{$$ = new EqualityExpr($1, new Operator(@2, "!="), $3)}
+		|	Expr T_And Expr			{$$ = new LogicalExpr($1, new Operator(@2, "&&"), $3)}
+		| 	Expr T_Or Expr				{$$ = new LogicalExpr($1, new Operator(@2, "||"), $3)}
+		|	'!' Expr					{$$ = new LogicalExpr(new Operator(@1, '!'), $2)}
+		|	T_ReadInteger '(' ')'		{$$ = new ReadIntegerExpr(@1)}
+		|	T_ReadLine '(' ')'			{$$ = new ReadLineExpr(@1)}
+		|	T_New '(' T_Identifier ')'	{$$ = new NewExpr(@1), new NamedType(new Identifier(@3, $3))}
+		|	T_NewArray '(' Expr ',' Type ')'{$$ = new NewArrayExpr(@1, $3, $5)}
+;
+
+LValue	:	T_Identifier			{$$ = new FieldAccess(NULL, new Identifier(@1, $1));}
+		|	Expr '.' T_Identifier	{$$ = new FieldAccess($1, new Identifier(@1, $1));}
+		|	Expr '[' Expr ']'		{$$ = new ArrayAccess(@1, $1, $3  );}
+		
 
 ;
 
-LValue	:
-
-;
-
-Call		:	T_Identifier '(' Actuals ')'			{$$ = new Call(@1, NULL, $3);}
-		|	Expr '.' T_Identifier '(' Actuals ')'	{$$ = new Call(@3, $1, $5);}
+Call		:	T_Identifier '(' Actuals ')'			{$$ = new Call(@1, NULL, new Identifier(@1, $1), $3);}
+		|	Expr '.' T_Identifier '(' Actuals ')'	{$$ = new Call(@3, $1, new Identifier(@3, $3), $5);}
 
 ;
 
@@ -248,6 +279,7 @@ Constants: 	T_IntConstant		{$$ = new IntConstant(@1, $1)}
 		|	T_DoubleConstant	{$$ = new DoubleConstant(@1, $1)}
 		|	T_BoolConstant		{$$ = new BoolConstant(@1, $1)}
 		|	'"'T_StringConstant	'"'{$$ = new StringConstant(@2, $2)}
+		|	T_Null			{$$ = new NullConstant(@1)}
 ;
 
 
