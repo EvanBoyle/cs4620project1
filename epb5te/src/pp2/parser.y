@@ -39,6 +39,9 @@ void yyerror(const char *msg); // standard error-handling routine
  *      attributes to your non-terminal symbols.
  */
 %union {
+	Call *call;
+	Expr *expr;
+	List<Expr*> *exprList;
     int integerConstant;
     bool boolConstant;
     char *stringConstant;
@@ -90,6 +93,9 @@ void yyerror(const char *msg); // standard error-handling routine
  * pp2: You'll need to add many of these of your own.
  */
 %type <declList>  DeclList IFnDecls DeclListC DeclListCs  
+%type <call>		Call
+%type <exprList>	Actuals
+%type <expr>		Constants Expr
 %type <namedList> ImpDecls ImpDecl
 %type <named>		ExDecl		
 %type <decl>      Decl DeclC  
@@ -215,12 +221,35 @@ VarDecls  : VarDecls VarDecl     { ($$=$1)->Append($2); }
 StmtList  : /* empty, add your grammar */  { $$ = new List<Stmt*>; }
 ;
 
-Constants: 	T_IntConstant		{$$ = new IntConstant(@1, $1)}
-		|	T_DoubleConstant	{$$ = new IntConstant(@1, $1)}
-		|	T_BoolConstant		{$$ = new IntConstant(@1, $1)}
-		|	'"'T_StringConstant	'"'{$$ = new IntConstant(@2, $2)}
-		|	'null'
+//stmts go here
+
+Expr 	:
+
 ;
+
+LValue	:
+
+;
+
+Call		:	T_Identifier '(' Actuals ')'			{$$ = new Call(@1, NULL, $3);}
+		|	Expr '.' T_Identifier '(' Actuals ')'	{$$ = new Call(@3, $1, $5);}
+
+;
+
+
+
+Actuals	: 	Actuals ',' Expr	{($$=1)->Append($3);}
+		|	Expr				{($$ = new List<Expr*>)->Append($1);}
+		| /* empty */			{$$ = new List<*Expr>}
+
+;
+
+Constants: 	T_IntConstant		{$$ = new IntConstant(@1, $1)}
+		|	T_DoubleConstant	{$$ = new DoubleConstant(@1, $1)}
+		|	T_BoolConstant		{$$ = new BoolConstant(@1, $1)}
+		|	'"'T_StringConstant	'"'{$$ = new StringConstant(@2, $2)}
+;
+
 
 
 		
