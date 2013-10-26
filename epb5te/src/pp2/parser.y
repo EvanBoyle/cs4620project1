@@ -108,7 +108,7 @@ void yyerror(const char *msg); // standard error-handling routine
 %type <cDecl>		ClassDecl
 %type <fDecl>     FnDecl FnHeader IFnDecl
 %type <stmtList>  StmtList
-%type <stmt>      StmtBlock
+%type <stmt>      StmtBlock Stmt PrintStmt BreakStmt ReturnStmt IfStmt WhileStmt ForStmt
 
 %%
 /* Rules
@@ -221,13 +221,47 @@ VarDecls  : VarDecls VarDecl     { ($$=$1)->Append($2); }
 ;
 
 StmtList  :	 
-		|	/* empty, add your grammar */  { $$ = new List<Stmt*>; }
+			/* empty, add your grammar */  { $$ = new List<Stmt*>; }
 ;	
 
 
 
 //stmts go here
+Stmt		: Expr ';'		{$$ = new Stmt(@1)}
+		|	';'			{$$ = new Stmt()}
+		| IfStmt			{$$ = $1}
+		| WhileStmt		{$$ = $1}
+		| ForStmt			{$$ = $1}
+		| BreakStmt		{$$ = $1}
+		| ReturnStmt		{$$ = $1}
+		| PrintStmt		{$$ = $1}
+		| StmtBlock		{$$ = $1}
 
+;
+
+IfStmt	:
+;
+
+WhileStmt	:
+;
+
+ForStmt	:	T_For '(' ';' Expr ';'  ';' ')' Stmt
+		|	T_For '(' ';' Expr ';' Expr ';' ')' Stmt
+		|	T_For '(' Expr ';' Expr ';'  ';' ')' Stmt
+		|	T_For '(' Expr ';' Expr ';' Expr ';' ')' Stmt
+
+;
+
+ReturnStmt: T_Return ';'					{$$ = new ReturnStmt(@1, NULL);}
+		| T_Return Expr ';'				{$$ = new ReturnStmt(@1, $2);}
+;
+
+BreakStmt : T_Break ';'					{$$ = new BreakStmt(@1);}
+;
+
+PrintStmt : T_Print '(' Actuals ')' ';'		{$$ = new PrintStmt($3);}
+;
+ 
 Expr 	:	LValue '=' Expr			{$$ = new AssignExpr($1, new Operator(@2, '='), $3 );}
 		|	Constants					{$$ = $1;}
 		|	LValue					{$$ = $1;}
