@@ -220,8 +220,7 @@ VarDecls  : VarDecls VarDecl     { ($$=$1)->Append($2); }
           | /* empty*/           { $$ = new List<VarDecl*>; }
 ;
 
-StmtList  :	StmtList Stmt		{($$=$1)->Append($2);}
-		|	Stmt				{($$ = new List<Stmt*>)->Append($1);}
+StmtList  :	 Stmt	StmtList	{($$=$2)->Append($1);}
 		| 
 			/* empty, add your grammar */  { $$ = new List<Stmt*>; }
 ;	
@@ -248,13 +247,15 @@ IfStmt	: 	T_If '(' Expr ')' Stmt 			{$$ = new IfStmt($3, $5, NULL);}
 
 ;
 
+
+
 WhileStmt	:	T_While '(' Expr ')' Stmt			{$$ = new WhileStmt($3, $5);}
 ;
 
-ForStmt	:	T_For '(' ';' Expr ';'  ';' ')' Stmt 		{$$ = new ForStmt(NULL, $4, NULL, $8);}
-		|	T_For '(' ';' Expr ';' Expr ';' ')' Stmt	{$$ = new ForStmt(NULL, $4, $6, $9);}
-		|	T_For '(' Expr ';' Expr ';'  ';' ')' Stmt	{$$ = new ForStmt($3, $5, NULL, $9);}
-		|	T_For '(' Expr ';' Expr ';' Expr ';' ')'Stmt {$$ = new ForStmt($3, $5, $7, $10);}
+ForStmt	:	T_For '(' ';' Expr ';'   ')' Stmt 		{$$ = new ForStmt(NULL, $4, NULL, $7);}
+		|	T_For '(' ';' Expr ';' Expr  ')' Stmt	{$$ = new ForStmt(NULL, $4, $6, $8);}
+		|	T_For '(' Expr ';' Expr ';'   ')' Stmt	{$$ = new ForStmt($3, $5, NULL, $8);}
+		|	T_For '(' Expr ';' Expr ';' Expr  ')'Stmt {$$ = new ForStmt($3, $5, $7, $9);}
 
 ;
 
@@ -322,7 +323,7 @@ Actuals	: 	Actuals ',' Expr	{($$=$1)->Append($3);}
 Constants: 	T_IntConstant		{$$ = new IntConstant(@1, $1);}
 		|	T_DoubleConstant	{$$ = new DoubleConstant(@1, $1);}
 		|	T_BoolConstant		{$$ = new BoolConstant(@1, $1);}
-		|	'"'T_StringConstant	'"'{$$ = new StringConstant(@2, $2);}
+		|	T_StringConstant	 {$$ = new StringConstant(@1, $1);}
 		|	T_Null			{$$ = new NullConstant(@1);}
 ;
 
