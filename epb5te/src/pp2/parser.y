@@ -220,7 +220,8 @@ VarDecls  : VarDecls VarDecl     { ($$=$1)->Append($2); }
           | /* empty*/           { $$ = new List<VarDecl*>; }
 ;
 
-StmtList  :	 Stmt	StmtList	{($$=$2)->Append($1);}
+StmtList  :	 StmtList Stmt	{($$=$1)->Append($2);}
+		| Stmt		{($$ = new List<Stmt*>)->Append($1);}
 		| 
 			/* empty, add your grammar */  { $$ = new List<Stmt*>; }
 ;	
