@@ -237,6 +237,7 @@ Stmt		: Expr ';'		{$$ = $1;}
 		| BreakStmt		{$$ = $1;}
 		| ReturnStmt		{$$ = $1;}
 		| PrintStmt		{$$ = $1;}
+		| SwitchStmt		{$$ = $1;}
 		| StmtBlock		{$$ = $1;}
 
 ;
