@@ -24,6 +24,7 @@ class Decl : public Node
   
   public:
     Decl(Identifier *name);
+    char * Name(){return id->GetName();}
 };
 
 class VarDecl : public Decl 

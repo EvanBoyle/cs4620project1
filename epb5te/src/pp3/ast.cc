@@ -45,6 +45,15 @@ Scope::Scope(Node * reference){
 		symtab = new Hashtable<Node *>;
 }
 
+bool Scope::Insert(char * id, Node * treeRef){
+	if(symtab->Lookup(id)!=NULL){
+		return false;
+	}
+	symtab->Enter(id, treeRef);
+	return true;
+	
+}
+
 void Node::BuildSymTab(){
 	
 	

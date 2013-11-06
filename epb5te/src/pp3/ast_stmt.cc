@@ -22,6 +22,17 @@ void Program::Check() {
      *      and polymorphism in the node classes.
      */
 }
+void Program::BuildSymTab(){
+	this->SetScope(new Scope(this));
+	for(int i = 0; i < decls->NumElements(); i++){
+		bool result = this->GetScope()->Insert(decls->Nth(i)->Name(), decls->Nth(i));
+		decls->Nth(i)->BuildSymTab();
+		if(!result){
+			//report error - duplicate decl
+		}
+	}
+	
+}
 
 void Program::PrintChildren(int indentLevel) {
     decls->PrintAll(indentLevel+1);

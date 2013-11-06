@@ -25,6 +25,8 @@ class Program : public Node
   public:
      Program(List<Decl*> *declList);
      const char *GetPrintNameForNode() { return "Program"; }
+     void Check();
+     void BuildSymTab();
      void PrintChildren(int indentLevel);
 };
 

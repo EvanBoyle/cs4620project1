@@ -50,6 +50,8 @@ class Node
     yyltype *GetLocation()   { return location; }
     void SetParent(Node *p)  { parent = p; }
     Node *GetParent()        { return parent; }
+    Scope *GetScope()		{return scope;}
+    void SetScope(Scope *s)	{scope = s;}
 
     virtual const char *GetPrintNameForNode() = 0;
     
@@ -69,6 +71,8 @@ class Scope
   public:
 	Scope(Node *ref);
 	Node *GetTreeNode() {return treeNode;}
+	Hashtable<Node*> *GetSymTab(){return symtab;}
+	bool Insert(char * id, Node * treeRef);
 		
 	
 };
@@ -83,6 +87,7 @@ class Identifier : public Node
     Identifier(yyltype loc, const char *name);
     const char *GetPrintNameForNode()   { return "Identifier"; }
     void PrintChildren(int indentLevel);
+    char * GetName(){return name;}
 };
 
 
