@@ -11,11 +11,13 @@
 Node::Node(yyltype loc) {
     location = new yyltype(loc);
     parent = NULL;
+    scope = NULL;
 }
 
 Node::Node() {
     location = NULL;
     parent = NULL;
+	scope = NULL;
 }
 
 /* The Print method is used to print the parse tree nodes.
@@ -37,6 +39,16 @@ void Node::Print(int indentLevel, const char *label) {
            label? label : "", GetPrintNameForNode());
    PrintChildren(indentLevel);
 } 
+
+Scope::Scope(Node * reference){
+		treeNode = reference;
+		symtab = new Hashtable<Node *>;
+}
+
+void Node::BuildSymTab(){
+	
+	
+}
 	 
 Identifier::Identifier(yyltype loc, const char *n) : Node(loc) {
     name = strdup(n);

@@ -26,16 +26,26 @@
 
 #include <stdlib.h>   // for NULL
 #include "location.h"
+#include "hashtable.h"
+#include <string.h>
+
+
+class Scope;
+
+
 
 class Node 
 {
   protected:
     yyltype *location;
     Node *parent;
+    Scope * scope;
+    
 
   public:
     Node(yyltype loc);
     Node();
+    
     
     yyltype *GetLocation()   { return location; }
     void SetParent(Node *p)  { parent = p; }
@@ -45,8 +55,22 @@ class Node
     
     // Print() is deliberately _not_ virtual
     // subclasses should override PrintChildren() instead
-    void Print(int indentLevel, const char *label = NULL); 
+    void Print(int indentLevel, const char *label = NULL);
+    void BuildSymTab(); 
     virtual void PrintChildren(int indentLevel)  {}
+};
+
+class Scope
+{
+  protected: 
+	Hashtable<Node*> *symtab;
+	Node *treeNode;
+	
+  public:
+	Scope(Node *ref);
+	Node *GetTreeNode() {return treeNode;}
+		
+	
 };
    
 
