@@ -13,6 +13,16 @@ Program::Program(List<Decl*> *d) {
     (decls=d)->SetParentAll(this);
 }
 
+void Program::Check() {
+    /* pp3: here is where the semantic analyzer is kicked off.
+     *      The general idea is perform a tree traversal of the
+     *      entire program, examining all constructs for compliance
+     *      with the semantic rules.  Each node can have its own way of
+     *      checking itself, which makes for a great use of inheritance
+     *      and polymorphism in the node classes.
+     */
+}
+
 void Program::PrintChildren(int indentLevel) {
     decls->PrintAll(indentLevel+1);
     printf("\n");
