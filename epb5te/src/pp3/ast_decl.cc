@@ -31,6 +31,17 @@ ClassDecl::ClassDecl(Identifier *n, NamedType *ex, List<NamedType*> *imp, List<D
     (implements=imp)->SetParentAll(this);
     (members=m)->SetParentAll(this);
 }
+void ClassDecl::BuildSymTab(){
+	this->SetScope(new Scope(this));
+	for(int i = 0; i < members->NumElements(); i++){
+		bool result = this->GetScope()->Insert(members->Nth(i)->Name(), members->Nth(i));
+		members->Nth(i)->BuildSymTab();
+		if(!result){
+			//report error - duplicate decl
+		}
+	}
+	
+}
 
 void ClassDecl::PrintChildren(int indentLevel) {
     id->Print(indentLevel+1);
@@ -45,6 +56,18 @@ InterfaceDecl::InterfaceDecl(Identifier *n, List<Decl*> *m) : Decl(n) {
     (members=m)->SetParentAll(this);
 }
 
+void InterfaceDecl::BuildSymTab(){
+	this->SetScope(new Scope(this));
+	for(int i = 0; i < members->NumElements(); i++){
+		bool result = this->GetScope()->Insert(members->Nth(i)->Name(), members->Nth(i));
+		members->Nth(i)->BuildSymTab();
+		if(!result){
+			//report error - duplicate decl
+		}
+	}
+	
+}
+
 void InterfaceDecl::PrintChildren(int indentLevel) {
     id->Print(indentLevel+1);
     members->PrintAll(indentLevel+1);
@@ -56,6 +79,27 @@ FnDecl::FnDecl(Identifier *n, Type *r, List<VarDecl*> *d) : Decl(n) {
     (formals=d)->SetParentAll(this);
     body = NULL;
 }
+
+
+void FnDecl::BuildSymTab(){
+	this->SetScope(new Scope(this));
+	for(int i = 0; i < formals->NumElements(); i++){
+		bool result = this->GetScope()->Insert(formals->Nth(i)->Name(), formals->Nth(i));
+		formals->Nth(i)->BuildSymTab();
+		if(!result){
+			//report error - duplicate decl
+		}
+	}
+	
+	body->BuildSymTab();
+	
+	
+}
+
+
+
+
+
 
 void FnDecl::SetFunctionBody(Stmt *b) { 
     (body=b)->SetParent(this);

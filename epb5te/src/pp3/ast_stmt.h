@@ -47,6 +47,7 @@ class StmtBlock : public Stmt
     StmtBlock(List<VarDecl*> *variableDeclarations, List<Stmt*> *statements);
     const char *GetPrintNameForNode() { return "StmtBlock"; }
     void PrintChildren(int indentLevel);
+    void BuildSymTab();
 };
 
   

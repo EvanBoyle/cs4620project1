@@ -50,6 +50,7 @@ class ClassDecl : public Decl
               List<NamedType*> *implements, List<Decl*> *members);
     const char *GetPrintNameForNode() { return "ClassDecl"; }
     void PrintChildren(int indentLevel);
+    void BuildSymTab();
 };
 
 class InterfaceDecl : public Decl 
@@ -61,6 +62,7 @@ class InterfaceDecl : public Decl
     InterfaceDecl(Identifier *name, List<Decl*> *members);
     const char *GetPrintNameForNode() { return "InterfaceDecl"; }
     void PrintChildren(int indentLevel);
+    void BuildSymTab();
 };
 
 class FnDecl : public Decl 
@@ -75,6 +77,7 @@ class FnDecl : public Decl
     void SetFunctionBody(Stmt *b);
     const char *GetPrintNameForNode() { return "FnDecl"; }
     void PrintChildren(int indentLevel);
+    void BuildSymTab();
 };
 
 #endif

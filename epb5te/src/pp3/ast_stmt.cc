@@ -45,6 +45,18 @@ StmtBlock::StmtBlock(List<VarDecl*> *d, List<Stmt*> *s) {
     (stmts=s)->SetParentAll(this);
 }
 
+void StmtBlock::BuildSymTab(){
+	this->SetScope(new Scope(this));
+	for(int i = 0; i < decls->NumElements(); i++){
+		bool result = this->GetScope()->Insert(decls->Nth(i)->Name(), decls->Nth(i));
+		decls->Nth(i)->BuildSymTab();
+		if(!result){
+			//report error - duplicate decl
+		}
+	}
+	
+}
+
 void StmtBlock::PrintChildren(int indentLevel) {
     decls->PrintAll(indentLevel+1);
     stmts->PrintAll(indentLevel+1);
