@@ -5,6 +5,7 @@
 #include "ast_decl.h"
 #include "ast_type.h"
 #include "ast_stmt.h"
+#include "errors.h"
         
          
 Decl::Decl(Identifier *n) : Node(*n->GetLocation()) {
@@ -38,6 +39,8 @@ void ClassDecl::BuildSymTab(){
 		members->Nth(i)->BuildSymTab();
 		if(!result){
 			//report error - duplicate decl
+			Decl * prev_decl = (Node*)this->GetScope()->GetSymTab()->Lookup(members->Nth(i)->Name());
+			ReportError::DeclConflict(members->Nth(i), prev_decl);
 		}
 	}
 	
@@ -63,6 +66,8 @@ void InterfaceDecl::BuildSymTab(){
 		members->Nth(i)->BuildSymTab();
 		if(!result){
 			//report error - duplicate decl
+			Decl * prev_decl = (Node*)this->GetScope()->GetSymTab()->Lookup(members->Nth(i)->Name());
+			ReportError::DeclConflict(members->Nth(i), prev_decl);
 		}
 	}
 	
@@ -88,10 +93,12 @@ void FnDecl::BuildSymTab(){
 		formals->Nth(i)->BuildSymTab();
 		if(!result){
 			//report error - duplicate decl
+			Decl * prev_decl = (Node*)this->GetScope()->GetSymTab()->Lookup(formals->Nth(i)->Name());
+			ReportError::DeclConflict(formals->Nth(i), prev_decl);
 		}
 	}
-	
-	body->BuildSymTab();
+	printf("fnDecl\n");
+	((StmtBlock*)body)->BuildSymTab();
 	
 	
 }

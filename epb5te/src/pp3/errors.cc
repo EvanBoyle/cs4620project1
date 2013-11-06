@@ -79,7 +79,7 @@ void ReportError::UnrecogChar(yyltype *loc, char ch) {
 
 void ReportError::DeclConflict(Decl *decl, Decl *prevDecl) {
     stringstream s;
-    s << "Declaration of '" << decl << "' here conflicts with declaration on line " 
+    s << "Declaration of '" << decl->Name() << "' here conflicts with declaration on line " 
       << prevDecl->GetLocation()->first_line;
     OutputError(decl->GetLocation(), s.str());
 }

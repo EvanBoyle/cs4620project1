@@ -30,6 +30,7 @@
 #include <string.h>
 
 
+
 class Scope;
 
 
@@ -58,7 +59,7 @@ class Node
     // Print() is deliberately _not_ virtual
     // subclasses should override PrintChildren() instead
     void Print(int indentLevel, const char *label = NULL);
-    void BuildSymTab(); 
+    virtual void BuildSymTab(); 
     virtual void PrintChildren(int indentLevel)  {}
 };
 

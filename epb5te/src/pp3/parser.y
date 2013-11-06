@@ -106,6 +106,7 @@ Program   :    DeclList            {
                                       @1; 
                                       Program *program = new Program($1);
                                       // if no errors, advance to next phase
+										
                                       if (ReportError::NumErrors() == 0) 
                                           program->Check();
                                     }

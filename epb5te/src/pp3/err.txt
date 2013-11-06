@@ -1,0 +1,6 @@
+
+*** Error line 2.
+*** Error line 6.
+^
+*** syntax error
+
