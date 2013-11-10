@@ -44,6 +44,7 @@ class NamedType : public Type
     void PrintChildren(int indentLevel);
     char * Name(){return id->GetName();}
     Identifier * GetId(){return id;}
+    
 };
 
 class ArrayType : public Type 

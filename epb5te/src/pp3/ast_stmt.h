@@ -38,6 +38,7 @@ class Stmt : public Node
      Stmt() : Node() {}
      Stmt(yyltype loc) : Node(loc) {}
      void UndefCheck(){}
+     void BuildSymTab(){}
      
 };
 
@@ -66,6 +67,7 @@ class ConditionalStmt : public Stmt
   public:
     ConditionalStmt(Expr *testExpr, Stmt *body);
     void UndefCheck();
+    void BuildSymTab();
 };
 
 class LoopStmt : public ConditionalStmt 
@@ -85,6 +87,7 @@ class ForStmt : public LoopStmt
     ForStmt(Expr *init, Expr *test, Expr *step, Stmt *body);
     const char *GetPrintNameForNode() { return "ForStmt"; }
     void PrintChildren(int indentLevel);
+    
 };
 
 class WhileStmt : public LoopStmt 

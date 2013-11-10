@@ -24,8 +24,11 @@ void Program::Check() {
      *      and polymorphism in the node classes.
      */
      this->BuildSymTab();
+     printf("sym tab built \n");
      this->TraverseCheck();
+     printf("class overides checked\n");
      this->UndefCheck();
+     printf("undeclared checked\n");
 }
 void Program::BuildSymTab(){
 	//printf("working \n");
@@ -48,6 +51,12 @@ void Program::UndefCheck(){
 		
 	}
 	
+}
+
+void ConditionalStmt::BuildSymTab(){
+	if(body){
+		body->BuildSymTab();
+	}
 }
 
 
@@ -85,18 +94,18 @@ void StmtBlock::UndefCheck(){
 }
 void WhileStmt::UndefCheck(){
 	if(body){
-		((StmtBlock*)body)->UndefCheck();
+		(body)->UndefCheck();
 	}
 }
 void ConditionalStmt::UndefCheck(){
 	if(body){
-		((StmtBlock*)body)->UndefCheck();
+		(body)->UndefCheck();
 	}
 }
 void LoopStmt::UndefCheck(){
 	if(body){
 		
-		((StmtBlock*)body)->UndefCheck();
+		(body)->UndefCheck();
 	}
 }
 
@@ -120,6 +129,14 @@ void StmtBlock::BuildSymTab(){
 			ReportError::DeclConflict(decls->Nth(i), prev_decl);
 			//report error - duplicate decl
 		}
+	}
+	
+	for(int i = 0; i < stmts->NumElements(); i++){
+		/*if(strcmp(stmts->Nth(i)->GetPrintNameForNode(),"StmtBlock")==0){
+			(stmts->Nth(i))->BuildSymTab();
+		  }*/
+		(stmts->Nth(i))->BuildSymTab();
+		
 	}
 	
 }

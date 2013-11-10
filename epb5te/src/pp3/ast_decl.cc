@@ -27,11 +27,15 @@ void VarDecl::PrintChildren(int indentLevel) {
 }
 
 void FnDecl::UndefCheck(){
+	printf("fn check called\n");
 	
 	for(int i = 0; i<formals->NumElements();i++){
 		
 		Node* parentPtr = this->GetParent();
 		bool exists = false;
+		if(strcmp(formals->Nth(i)->GetType()->GetPrintNameForNode(),"NamedType")!=0){
+			continue;
+		}
 		while(parentPtr){
 			if(parentPtr->GetScope()->GetSymTab()->Lookup(formals->Nth(i)->GetType()->Name())){
 				exists = true;
@@ -69,11 +73,17 @@ void FnDecl::UndefCheck(){
 }
 
 void VarDecl::UndefCheck(){
-	printf(GetType()->Name());
+	printf("vardecl ucheck called\n");
+	//printf(GetType()->Name());
 	if(strcmp(GetType()->GetPrintNameForNode(),"NamedType")==0){
+		printf("named type");
 		Node* parentPtr = this->GetParent();
 		bool exists = false;
 		while(parentPtr){
+			if(!parentPtr->GetScope()){
+				break;
+			}
+			printf(Name());
 			if(parentPtr->GetScope()->GetSymTab()->Lookup(GetType()->Name())){
 				exists = true;
 				break;
