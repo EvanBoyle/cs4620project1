@@ -31,6 +31,7 @@ class Program : public Node
      void TraverseCheck();
      void UndefCheck();
      void ImplCheck();
+     void ThisCheck();
 };
 
 class Stmt : public Node
@@ -40,6 +41,7 @@ class Stmt : public Node
      Stmt(yyltype loc) : Node(loc) {}
      void UndefCheck(){}
      void BuildSymTab(){}
+     void ThisCheck(){}
      
 };
 
@@ -56,6 +58,7 @@ class StmtBlock : public Stmt
     void BuildSymTab();
     void TraverseCheck();
     void UndefCheck();
+    void ThisCheck();
 };
 
   

@@ -32,6 +32,14 @@ void Program::Check() {
      this->ImplCheck();
      printf("implement interface checked \n");
 }
+
+void Program::ThisCheck(){
+	for(int i = 0; i < decls->NumElements(); i++){
+		decls->Nth(i)->ThisCheck();
+		
+	}
+}
+
 void Program::BuildSymTab(){
 	//printf("working \n");
 	this->SetScope(new Scope(this));
@@ -100,6 +108,20 @@ void StmtBlock::UndefCheck(){
 		
 	}
 	
+}
+
+void StmtBlock::ThisCheck(){
+	
+	for(int i = 0; i < decls->NumElements(); i++){
+		
+		decls->Nth(i)->ThisCheck();
+		
+	}
+	for(int i = 0; i < stmts->NumElements(); i++){
+		
+		stmts->Nth(i)->ThisCheck();
+		
+	}
 }
 void WhileStmt::UndefCheck(){
 	if(body){

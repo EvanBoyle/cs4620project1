@@ -64,6 +64,7 @@ class Node
     virtual void BuildSymTab(); 
     virtual void ImplCheck();
     virtual void PrintChildren(int indentLevel)  {}
+    virtual void ThisCheck(){};
 };
 
 class Scope
