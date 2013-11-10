@@ -62,6 +62,7 @@ class Node
     // subclasses should override PrintChildren() instead
     void Print(int indentLevel, const char *label = NULL);
     virtual void BuildSymTab(); 
+    virtual void ImplCheck();
     virtual void PrintChildren(int indentLevel)  {}
 };
 

@@ -57,6 +57,7 @@ class ClassDecl : public Decl
     void BuildSymTab();
     void TraverseCheck();
     void UndefCheck();
+    void ImplCheck();
 };
 
 class InterfaceDecl : public Decl 
@@ -69,6 +70,7 @@ class InterfaceDecl : public Decl
     const char *GetPrintNameForNode() { return "InterfaceDecl"; }
     void PrintChildren(int indentLevel);
     void BuildSymTab();
+    List<Decl*>* GetMembers(){return members;}
 };
 
 class FnDecl : public Decl 

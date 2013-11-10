@@ -119,6 +119,27 @@ void VarDecl::UndefCheck(){
 	}
 }
 
+void ClassDecl::ImplCheck(){
+	
+	for(int i =0; i<implements->NumElements();i++){
+		bool doesImpl = true;
+		InterfaceDecl * idecl = GetParent()->GetScope()->GetSymTab()->Lookup(implements->Nth(i)->Name());
+		if(idecl){
+			for(int j =0; j< idecl->GetMembers()->NumElements(); j++){
+				for(int k = 0; k< members->NumElements();k++){
+					if(strcmp(members->Nth(k)->Name(), idecl->GetMembers()->Nth(j)->Name())==0){
+						break;
+					}
+					doesImpl = false;
+				}
+			}
+		}
+		if(!doesImpl){
+			ReportError::InterfaceNotImplemented(this, implements->Nth(i));
+		}
+	}
+}
+
 void ClassDecl::UndefCheck(){
 	for(int i =0; i< implements->NumElements();i++){
 		Node* parentPtr = this->GetParent();

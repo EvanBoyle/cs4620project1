@@ -29,6 +29,8 @@ void Program::Check() {
      printf("class overides checked\n");
      this->UndefCheck();
      printf("undeclared checked\n");
+     this->ImplCheck();
+     printf("implement interface checked \n");
 }
 void Program::BuildSymTab(){
 	//printf("working \n");
@@ -56,6 +58,13 @@ void Program::UndefCheck(){
 void ConditionalStmt::BuildSymTab(){
 	if(body){
 		body->BuildSymTab();
+	}
+}
+
+void Program::ImplCheck(){
+	for(int i = 0; i < decls->NumElements(); i++){
+		decls->Nth(i)->ImplCheck();
+		
 	}
 }
 

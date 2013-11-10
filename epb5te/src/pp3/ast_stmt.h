@@ -30,6 +30,7 @@ class Program : public Node
      void PrintChildren(int indentLevel);
      void TraverseCheck();
      void UndefCheck();
+     void ImplCheck();
 };
 
 class Stmt : public Node
