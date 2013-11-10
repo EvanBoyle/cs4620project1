@@ -86,7 +86,7 @@ void ReportError::DeclConflict(Decl *decl, Decl *prevDecl) {
   
 void ReportError::OverrideMismatch(Decl *fnDecl) {
     stringstream s;
-    s << "Method '" << fnDecl << "' must match inherited type signature";
+    s << "Method '" << fnDecl->Name() << "' must match inherited type signature";
     OutputError(fnDecl->GetLocation(), s.str());
 }
 
@@ -100,7 +100,7 @@ void ReportError::IdentifierNotDeclared(Identifier *ident, reasonT whyNeeded) {
     stringstream s;
     static const char *names[] =  {"type", "class", "interface", "variable", "function"};
     Assert(whyNeeded >= 0 && whyNeeded <= sizeof(names)/sizeof(names[0]));
-    s << "No declaration found for "<< names[whyNeeded] << " '" << ident << "'";
+    s << "No declaration found for "<< names[whyNeeded] << " '" << ident->GetName() << "'";
     OutputError(ident->GetLocation(), s.str());
 }
 

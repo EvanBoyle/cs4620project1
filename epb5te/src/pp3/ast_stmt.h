@@ -28,6 +28,8 @@ class Program : public Node
      void Check();
      void BuildSymTab();
      void PrintChildren(int indentLevel);
+     void TraverseCheck();
+     void UndefCheck();
 };
 
 class Stmt : public Node
@@ -35,6 +37,8 @@ class Stmt : public Node
   public:
      Stmt() : Node() {}
      Stmt(yyltype loc) : Node(loc) {}
+     void UndefCheck(){}
+     
 };
 
 class StmtBlock : public Stmt 
@@ -48,6 +52,8 @@ class StmtBlock : public Stmt
     const char *GetPrintNameForNode() { return "StmtBlock"; }
     void PrintChildren(int indentLevel);
     void BuildSymTab();
+    void TraverseCheck();
+    void UndefCheck();
 };
 
   
@@ -59,6 +65,7 @@ class ConditionalStmt : public Stmt
   
   public:
     ConditionalStmt(Expr *testExpr, Stmt *body);
+    void UndefCheck();
 };
 
 class LoopStmt : public ConditionalStmt 
@@ -66,6 +73,7 @@ class LoopStmt : public ConditionalStmt
   public:
     LoopStmt(Expr *testExpr, Stmt *body)
             : ConditionalStmt(testExpr, body) {}
+    void UndefCheck();
 };
 
 class ForStmt : public LoopStmt 
@@ -85,6 +93,7 @@ class WhileStmt : public LoopStmt
     WhileStmt(Expr *test, Stmt *body) : LoopStmt(test, body) {}
     const char *GetPrintNameForNode() { return "WhileStmt"; }
     void PrintChildren(int indentLevel);
+    void UndefCheck();
 };
 
 class IfStmt : public ConditionalStmt 

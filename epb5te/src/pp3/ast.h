@@ -52,6 +52,8 @@ class Node
     void SetParent(Node *p)  { parent = p; }
     Node *GetParent()        { return parent; }
     Scope *GetScope()		{return scope;}
+    virtual void TraverseCheck();
+    virtual void UndefCheck();
     void SetScope(Scope *s)	{scope = s;}
 
     virtual const char *GetPrintNameForNode() = 0;

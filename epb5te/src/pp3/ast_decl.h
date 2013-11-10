@@ -25,6 +25,7 @@ class Decl : public Node
   public:
     Decl(Identifier *name);
     char * Name(){return id->GetName();}
+    Identifier * GetId(){return id;}
 };
 
 class VarDecl : public Decl 
@@ -36,6 +37,9 @@ class VarDecl : public Decl
     VarDecl(Identifier *name, Type *type);
     const char *GetPrintNameForNode() { return "VarDecl"; }
     void PrintChildren(int indentLevel);
+    bool Equals(VarDecl * oDecl);
+    Type * GetType(){return type;}
+    void UndefCheck();
 };
 
 class ClassDecl : public Decl 
@@ -51,6 +55,8 @@ class ClassDecl : public Decl
     const char *GetPrintNameForNode() { return "ClassDecl"; }
     void PrintChildren(int indentLevel);
     void BuildSymTab();
+    void TraverseCheck();
+    void UndefCheck();
 };
 
 class InterfaceDecl : public Decl 
@@ -78,6 +84,10 @@ class FnDecl : public Decl
     const char *GetPrintNameForNode() { return "FnDecl"; }
     void PrintChildren(int indentLevel);
     void BuildSymTab();
+    Type * GetRT(){return returnType;}
+    List<VarDecl*> * GetFormals() {return formals;}
+    bool Equals(FnDecl * other);
+    void UndefCheck();
 };
 
 #endif

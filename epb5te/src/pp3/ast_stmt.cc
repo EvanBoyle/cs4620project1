@@ -15,7 +15,7 @@ Program::Program(List<Decl*> *d) {
 }
 
 void Program::Check() {
-	printf("check \n");
+	//printf("check \n");
     /* pp3: here is where the semantic analyzer is kicked off.
      *      The general idea is perform a tree traversal of the
      *      entire program, examining all constructs for compliance
@@ -24,19 +24,37 @@ void Program::Check() {
      *      and polymorphism in the node classes.
      */
      this->BuildSymTab();
+     this->TraverseCheck();
+     this->UndefCheck();
 }
 void Program::BuildSymTab(){
-	printf("working \n");
+	//printf("working \n");
 	this->SetScope(new Scope(this));
 	for(int i = 0; i < decls->NumElements(); i++){
 		bool result = this->GetScope()->Insert(decls->Nth(i)->Name(), decls->Nth(i));
 		decls->Nth(i)->BuildSymTab();
 		if(!result){
-			printf("error: %s", decls->Nth(i)->Name());
+			//printf("error: %s", decls->Nth(i)->Name());
 			Decl * prev_decl = (Node*)this->GetScope()->GetSymTab()->Lookup(decls->Nth(i)->Name());
 			ReportError::DeclConflict(decls->Nth(i), prev_decl); 
 			//report error - duplicate decl
 		}
+	}
+	
+}
+void Program::UndefCheck(){
+	for(int i = 0; i < decls->NumElements(); i++){
+		decls->Nth(i)->UndefCheck();
+		
+	}
+	
+}
+
+
+void Program::TraverseCheck(){
+	for(int i = 0; i < decls->NumElements(); i++){
+		decls->Nth(i)->TraverseCheck();
+		
 	}
 	
 }
@@ -51,15 +69,53 @@ StmtBlock::StmtBlock(List<VarDecl*> *d, List<Stmt*> *s) {
     (decls=d)->SetParentAll(this);
     (stmts=s)->SetParentAll(this);
 }
+void StmtBlock::UndefCheck(){
+	
+	for(int i = 0; i < decls->NumElements(); i++){
+		
+		decls->Nth(i)->UndefCheck();
+		
+	}
+	for(int i = 0; i < stmts->NumElements(); i++){
+		
+		stmts->Nth(i)->UndefCheck();
+		
+	}
+	
+}
+void WhileStmt::UndefCheck(){
+	if(body){
+		((StmtBlock*)body)->UndefCheck();
+	}
+}
+void ConditionalStmt::UndefCheck(){
+	if(body){
+		((StmtBlock*)body)->UndefCheck();
+	}
+}
+void LoopStmt::UndefCheck(){
+	if(body){
+		
+		((StmtBlock*)body)->UndefCheck();
+	}
+}
+
+void StmtBlock::TraverseCheck(){
+	for(int i = 0; i < decls->NumElements(); i++){
+		decls->Nth(i)->TraverseCheck();
+		
+	}
+	
+}
 
 void StmtBlock::BuildSymTab(){
-	printf("in stmt block \n");
+	//printf("in stmt block \n");
 	this->SetScope(new Scope(this));
 	for(int i = 0; i < decls->NumElements(); i++){
 		bool result = this->GetScope()->Insert(decls->Nth(i)->Name(), decls->Nth(i));
 		decls->Nth(i)->BuildSymTab();
 		if(!result){
-			printf("error: %s", decls->Nth(i)->Name());
+			//printf("error: %s", decls->Nth(i)->Name());
 			Decl * prev_decl = (Node*)this->GetScope()->GetSymTab()->Lookup(decls->Nth(i)->Name());
 			ReportError::DeclConflict(decls->Nth(i), prev_decl);
 			//report error - duplicate decl
