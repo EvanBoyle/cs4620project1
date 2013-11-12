@@ -58,6 +58,8 @@ class ClassDecl : public Decl
     void TraverseCheck();
     void UndefCheck();
     void ImplCheck();
+    void ThisCheck();
+    char* CheckExpr();
 };
 
 class InterfaceDecl : public Decl 
@@ -90,6 +92,8 @@ class FnDecl : public Decl
     List<VarDecl*> * GetFormals() {return formals;}
     bool Equals(FnDecl * other);
     void UndefCheck();
+    void ThisCheck();
+    char* CheckExpr();
 };
 
 #endif

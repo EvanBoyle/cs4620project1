@@ -32,6 +32,7 @@ class Program : public Node
      void UndefCheck();
      void ImplCheck();
      void ThisCheck();
+     char* CheckExpr();
 };
 
 class Stmt : public Node
@@ -42,6 +43,7 @@ class Stmt : public Node
      void UndefCheck(){}
      void BuildSymTab(){}
      void ThisCheck(){}
+     
      
 };
 
@@ -59,6 +61,7 @@ class StmtBlock : public Stmt
     void TraverseCheck();
     void UndefCheck();
     void ThisCheck();
+    char* CheckExpr();
 };
 
   
@@ -72,6 +75,8 @@ class ConditionalStmt : public Stmt
     ConditionalStmt(Expr *testExpr, Stmt *body);
     void UndefCheck();
     void BuildSymTab();
+    void ThisCheck();
+    char* CheckExpr();
 };
 
 class LoopStmt : public ConditionalStmt 
@@ -80,6 +85,7 @@ class LoopStmt : public ConditionalStmt
     LoopStmt(Expr *testExpr, Stmt *body)
             : ConditionalStmt(testExpr, body) {}
     void UndefCheck();
+    
 };
 
 class ForStmt : public LoopStmt 

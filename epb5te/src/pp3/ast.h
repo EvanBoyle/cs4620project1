@@ -65,6 +65,7 @@ class Node
     virtual void ImplCheck();
     virtual void PrintChildren(int indentLevel)  {}
     virtual void ThisCheck(){};
+    virtual char* CheckExpr(){return NULL;};
 };
 
 class Scope

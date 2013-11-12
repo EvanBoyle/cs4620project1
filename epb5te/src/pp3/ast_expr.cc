@@ -6,8 +6,162 @@
 #include "ast_type.h"
 #include "ast_decl.h"
 #include <string.h>
+#include "errors.h"
 
 
+
+void CompoundExpr::ThisCheck(){
+	//printf(GetPrintNameForNode());
+	if(left){
+		left->ThisCheck();
+	}
+	if(right){
+		right->ThisCheck();
+	}
+}
+
+void This::ThisCheck(){
+	//printf("this checking\n");
+	Node * parentPtr = GetParent();
+	bool valid = false;
+	while(parentPtr!=NULL){
+		if(strcmp(parentPtr->GetPrintNameForNode(),"ClassDecl")==0){
+			valid = true;
+			break;
+		}
+		parentPtr=parentPtr->GetParent();
+		
+	}
+	if(!valid){
+		ReportError::ThisOutsideClassScope(this);
+	}
+}
+
+char* FieldAccess::CheckExpr(){
+	//printf("checking field acc\n");
+	Node* parentPtr = GetParent();
+	while(parentPtr){
+		VarDecl * decl=NULL;
+		if(parentPtr->GetScope()){
+			decl = parentPtr->GetScope()->GetSymTab()->Lookup(field->GetName());
+		}
+		
+		if(decl){
+			if(strcmp(decl->GetPrintNameForNode(),"VarDecl")==0){
+				return decl->GetType()->Name();
+			}
+		}
+		
+		parentPtr=parentPtr->GetParent();
+	}
+	return "UNDEFINED";
+}
+
+char* CompoundExpr::CheckExpr(){
+	
+	if(left){
+		//left->CheckExpr();
+		printf(left->GetPrintNameForNode());
+		//printf("\n");
+	}
+	if(right){
+		//right->CheckExpr();
+		printf(right->GetPrintNameForNode());
+		//printf("\n");
+	}
+	return "UNDEFINED";
+}
+
+char* ArithmeticExpr::CheckExpr(){
+	//printf("checking\n");
+	if(left && right){
+		char * ltype = left->CheckExpr();
+		char * rtype = right->CheckExpr();
+		if(!strcmp(ltype, rtype)==0){
+			ReportError::IncompatibleOperands(GetOperator(), ltype, rtype); 
+			return "UNDEFINED";
+		}
+		if(strcmp(ltype, "int")==0  || strcmp(ltype, "double")){
+			return ltype;
+		}
+		
+	}
+	else{
+		char * rtype = right->CheckExpr();
+		if(strcmp(rtype, "int")==0  || strcmp(rtype, "double")){
+			return rtype;
+		}
+	}
+	return "UNDEFINED";
+}
+
+char* RelationalExpr::CheckExpr(){
+	if(left && right){
+		char * ltype = left->CheckExpr();
+		char * rtype = right->CheckExpr();
+		if(!strcmp(ltype, rtype)==0){
+			ReportError::IncompatibleOperands(GetOperator(), ltype, rtype); 
+			return "UNDEFINED";
+		}
+		if(strcmp(ltype, "int")==0||strcmp(ltype, "double")==0){
+			return "bool";
+		}
+		
+	}
+	return "UNDEFINED";
+	
+}
+
+char* AssignExpr::CheckExpr(){
+	if(left && right){
+		char * ltype = left->CheckExpr();
+		char * rtype = right->CheckExpr();
+		if(!strcmp(ltype, rtype)==0){
+			ReportError::IncompatibleOperands(GetOperator(), ltype, rtype); 
+			return "UNDEFINED";
+		}
+		return ltype;
+		
+		
+	}
+	return "UNDEFINED";
+
+	
+}
+
+char* EqualityExpr::CheckExpr(){
+	//anything just same
+	if(left && right){
+	
+		char * ltype = left->CheckExpr();
+		char * rtype = right->CheckExpr();
+		if(!strcmp(ltype, rtype)==0){
+			ReportError::IncompatibleOperands(GetOperator(), ltype, rtype); 
+			return "UNDEFINED";
+		}
+		return ltype;
+	}
+	return "UNDEFINED";
+}
+
+char* LogicalExpr::CheckExpr(){
+	if(left && right){
+		char * ltype = left->CheckExpr();
+		char * rtype = right->CheckExpr();
+		if(!strcmp(ltype, rtype)==0){
+			ReportError::IncompatibleOperands(GetOperator(), ltype, rtype); 
+			return "UNDEFINED";
+		}
+		if(strcmp(ltype, "bool")==0 ){
+			return ltype;
+		}
+	}
+	char * rtype = right->CheckExpr();
+	if(strcmp(rtype, "bool")==0 ){
+			return rtype;
+	}
+	return "UNDEFINED";
+}
 
 IntConstant::IntConstant(yyltype loc, int val) : Expr(loc) {
     value = val;
@@ -40,6 +194,8 @@ void StringConstant::PrintChildren(int indentLevel) {
 
 Operator::Operator(yyltype loc, const char *tok) : Node(loc) {
     Assert(tok != NULL);
+    
+    
     strncpy(tokenString, tok, sizeof(tokenString));
 }
 

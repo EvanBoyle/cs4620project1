@@ -23,6 +23,7 @@ class Expr : public Stmt
   public:
     Expr(yyltype loc) : Stmt(loc) {}
     Expr() : Stmt() {}
+    void ThisCheck(){}
 };
 
 /* This node type is used for those places where an expression is optional.
@@ -43,6 +44,7 @@ class IntConstant : public Expr
     IntConstant(yyltype loc, int val);
     const char *GetPrintNameForNode() { return "IntConstant"; }
     void PrintChildren(int indentLevel);
+    char* CheckExpr(){return "int";}
 };
 
 class DoubleConstant : public Expr 
@@ -54,6 +56,7 @@ class DoubleConstant : public Expr
     DoubleConstant(yyltype loc, double val);
     const char *GetPrintNameForNode() { return "DoubleConstant"; }
     void PrintChildren(int indentLevel);
+    char* CheckExpr(){return "double";}
 };
 
 class BoolConstant : public Expr 
@@ -65,6 +68,7 @@ class BoolConstant : public Expr
     BoolConstant(yyltype loc, bool val);
     const char *GetPrintNameForNode() { return "BoolConstant"; }
     void PrintChildren(int indentLevel);
+    char* CheckExpr(){return "bool";}
 };
 
 class StringConstant : public Expr 
@@ -76,6 +80,7 @@ class StringConstant : public Expr
     StringConstant(yyltype loc, const char *val);
     const char *GetPrintNameForNode() { return "StringConstant"; }
     void PrintChildren(int indentLevel);
+    char* CheckExpr(){return "string";}
 };
 
 class NullConstant: public Expr 
@@ -83,6 +88,7 @@ class NullConstant: public Expr
   public: 
     NullConstant(yyltype loc) : Expr(loc) {}
     const char *GetPrintNameForNode() { return "NullConstant"; }
+    char* CheckExpr(){return "null";}
 };
 
 class Operator : public Node 
@@ -90,10 +96,12 @@ class Operator : public Node
   protected:
     char tokenString[4];
     
+    
   public:
     Operator(yyltype loc, const char *tok);
     const char *GetPrintNameForNode() { return "Operator"; }
     void PrintChildren(int indentLevel);
+    char * GetOp(){return tokenString;}
  };
  
 class CompoundExpr : public Expr
@@ -106,7 +114,12 @@ class CompoundExpr : public Expr
     CompoundExpr(Expr *lhs, Operator *op, Expr *rhs); // for binary
     CompoundExpr(Operator *op, Expr *rhs);             // for unary
     void PrintChildren(int indentLevel);
+    void ThisCheck();
+    char* CheckExpr();
+    Operator * GetOperator() {return op;}
 };
+
+
 
 class ArithmeticExpr : public CompoundExpr 
 {
@@ -114,6 +127,7 @@ class ArithmeticExpr : public CompoundExpr
     ArithmeticExpr(Expr *lhs, Operator *op, Expr *rhs) : CompoundExpr(lhs,op,rhs) {}
     ArithmeticExpr(Operator *op, Expr *rhs) : CompoundExpr(op,rhs) {}
     const char *GetPrintNameForNode() { return "ArithmeticExpr"; }
+    char* CheckExpr();
 };
 
 class RelationalExpr : public CompoundExpr 
@@ -121,6 +135,7 @@ class RelationalExpr : public CompoundExpr
   public:
     RelationalExpr(Expr *lhs, Operator *op, Expr *rhs) : CompoundExpr(lhs,op,rhs) {}
     const char *GetPrintNameForNode() { return "RelationalExpr"; }
+    char* CheckExpr();
 };
 
 class EqualityExpr : public CompoundExpr 
@@ -128,6 +143,7 @@ class EqualityExpr : public CompoundExpr
   public:
     EqualityExpr(Expr *lhs, Operator *op, Expr *rhs) : CompoundExpr(lhs,op,rhs) {}
     const char *GetPrintNameForNode() { return "EqualityExpr"; }
+    char* CheckExpr();
 };
 
 class LogicalExpr : public CompoundExpr 
@@ -136,6 +152,7 @@ class LogicalExpr : public CompoundExpr
     LogicalExpr(Expr *lhs, Operator *op, Expr *rhs) : CompoundExpr(lhs,op,rhs) {}
     LogicalExpr(Operator *op, Expr *rhs) : CompoundExpr(op,rhs) {}
     const char *GetPrintNameForNode() { return "LogicalExpr"; }
+    char* CheckExpr();
 };
 
 class AssignExpr : public CompoundExpr 
@@ -143,6 +160,7 @@ class AssignExpr : public CompoundExpr
   public:
     AssignExpr(Expr *lhs, Operator *op, Expr *rhs) : CompoundExpr(lhs,op,rhs) {}
     const char *GetPrintNameForNode() { return "AssignExpr"; }
+    char* CheckExpr();
 };
 
 class LValue : public Expr 
@@ -156,6 +174,7 @@ class This : public Expr
   public:
     This(yyltype loc) : Expr(loc) {}
     const char *GetPrintNameForNode() { return "This"; }
+    void ThisCheck();
 };
 
 class ArrayAccess : public LValue 
@@ -184,6 +203,8 @@ class FieldAccess : public LValue
     FieldAccess(Expr *base, Identifier *field); //ok to pass NULL base
     const char *GetPrintNameForNode() { return "FieldAccess"; }
     void PrintChildren(int indentLevel);
+    char* Name(){return field->GetName();}
+    char* CheckExpr();
 };
 
 /* Like field access, call is used both for qualified base.field()

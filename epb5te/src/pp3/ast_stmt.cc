@@ -14,6 +14,13 @@ Program::Program(List<Decl*> *d) {
     (decls=d)->SetParentAll(this);
 }
 
+void FnDecl::ThisCheck(){
+	
+	if(body){
+		body->ThisCheck();
+	}
+}
+
 void Program::Check() {
 	//printf("check \n");
     /* pp3: here is where the semantic analyzer is kicked off.
@@ -31,6 +38,10 @@ void Program::Check() {
      printf("undeclared checked\n");
      this->ImplCheck();
      printf("implement interface checked \n");
+     this->ThisCheck();
+     printf("this checked\n");
+     this->CheckExpr();
+     printf("exprs checked \n");
 }
 
 void Program::ThisCheck(){
@@ -39,6 +50,15 @@ void Program::ThisCheck(){
 		
 	}
 }
+
+char* Program::CheckExpr(){
+	for(int i = 0; i < decls->NumElements(); i++){
+		decls->Nth(i)->CheckExpr();
+		
+	}
+	return NULL;
+}
+
 
 void Program::BuildSymTab(){
 	//printf("working \n");
@@ -55,6 +75,20 @@ void Program::BuildSymTab(){
 	}
 	
 }
+void ConditionalStmt::ThisCheck(){
+	if(body){
+		body->ThisCheck();
+	}
+}
+
+char* ConditionalStmt::CheckExpr(){
+	if(body){
+		body->CheckExpr();
+	}
+	return NULL;
+}
+
+
 void Program::UndefCheck(){
 	for(int i = 0; i < decls->NumElements(); i++){
 		decls->Nth(i)->UndefCheck();
@@ -107,6 +141,22 @@ void StmtBlock::UndefCheck(){
 		stmts->Nth(i)->UndefCheck();
 		
 	}
+	
+}
+
+char* StmtBlock::CheckExpr(){
+	
+	for(int i = 0; i < decls->NumElements(); i++){
+		
+		decls->Nth(i)->CheckExpr();
+		
+	}
+	for(int i = 0; i < stmts->NumElements(); i++){
+		
+		stmts->Nth(i)->CheckExpr();
+		
+	}
+	return NULL;
 	
 }
 

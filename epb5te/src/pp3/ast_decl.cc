@@ -73,10 +73,10 @@ void FnDecl::UndefCheck(){
 }
 
 void VarDecl::UndefCheck(){
-	printf("vardecl ucheck called\n");
+	//printf("vardecl ucheck called\n");
 	//printf(GetType()->Name());
 	if(strcmp(GetType()->GetPrintNameForNode(),"NamedType")==0){
-		printf("named type");
+		//printf("named type");
 		Node* parentPtr = this->GetParent();
 		bool exists = false;
 		while(parentPtr){
@@ -85,8 +85,11 @@ void VarDecl::UndefCheck(){
 			}
 			printf(Name());
 			if(parentPtr->GetScope()->GetSymTab()->Lookup(GetType()->Name())){
-				exists = true;
-				break;
+				if(strcmp("ClassDecl",parentPtr->GetScope()->GetSymTab()->Lookup(GetType()->Name())->GetPrintNameForNode())==0){
+					exists = true;
+					break;
+				}
+				
 			}
 		parentPtr = parentPtr->GetParent();	
 		}
@@ -106,8 +109,10 @@ void VarDecl::UndefCheck(){
 		bool exists = false;
 		while(parentPtr){
 			if(parentPtr->GetScope()->GetSymTab()->Lookup(t->Name())){
-				exists = true;
-				break;
+				if(strcmp("ClassDecl",parentPtr->GetScope()->GetSymTab()->Lookup(t->Name())->GetPrintNameForNode())==0){
+					exists = true;
+					break;
+				}
 			}
 		parentPtr = parentPtr->GetParent();	
 		}
@@ -119,20 +124,60 @@ void VarDecl::UndefCheck(){
 	}
 }
 
+void ClassDecl::ThisCheck(){
+	for(int i =0; i<members->NumElements();i++){
+		members->Nth(i)->ThisCheck();
+	}
+	
+}
+
+char* ClassDecl::CheckExpr(){
+	for(int i =0; i<members->NumElements();i++){
+		members->Nth(i)->CheckExpr();
+	}
+	return NULL;
+	
+}
+char* FnDecl::CheckExpr(){
+	//printf("checking exprs for fn  \n");
+	if(body){
+		body->CheckExpr();
+	}
+	return NULL;
+}
+
 void ClassDecl::ImplCheck(){
 	
 	for(int i =0; i<implements->NumElements();i++){
 		bool doesImpl = true;
+		//printf("impl check class \n");
 		InterfaceDecl * idecl = GetParent()->GetScope()->GetSymTab()->Lookup(implements->Nth(i)->Name());
 		if(idecl){
-			for(int j =0; j< idecl->GetMembers()->NumElements(); j++){
-				for(int k = 0; k< members->NumElements();k++){
-					if(strcmp(members->Nth(k)->Name(), idecl->GetMembers()->Nth(j)->Name())==0){
-						break;
+			if(strcmp("InterfaceDecl",idecl->GetPrintNameForNode())==0){
+				for(int j =0; j< idecl->GetMembers()->NumElements(); j++){
+					bool flag = false;
+					for(int k = 0; k< members->NumElements();k++){
+						if(strcmp(members->Nth(k)->Name(), idecl->GetMembers()->Nth(j)->Name())==0){
+							printf(members->Nth(k)->Name());
+							printf("\n");
+							printf(idecl->GetMembers()->Nth(j)->Name());
+							printf("\n");
+							flag = true;
+							break;
+							
+						}
+						
 					}
-					doesImpl = false;
+						printf("%d %d\n", j, k);
+						if(flag == false){
+							doesImpl = false;
+							break;
+						}
+					
 				}
 			}
+			
+			//printf(implements->Nth(i)->Name());
 		}
 		if(!doesImpl){
 			ReportError::InterfaceNotImplemented(this, implements->Nth(i));
@@ -142,12 +187,16 @@ void ClassDecl::ImplCheck(){
 
 void ClassDecl::UndefCheck(){
 	for(int i =0; i< implements->NumElements();i++){
+		printf(implements->Nth(i)->Name());
 		Node* parentPtr = this->GetParent();
 		bool exists = false;
 		while(parentPtr){
 			if(parentPtr->GetScope()->GetSymTab()->Lookup(implements->Nth(i)->Name())){
-				exists = true;
-				break;
+				if(strcmp("InterfaceDecl",parentPtr->GetScope()->GetSymTab()->Lookup(implements->Nth(i)->Name())->GetPrintNameForNode())==0){
+					exists = true;
+					break;
+				}
+				
 			}
 		parentPtr = parentPtr->GetParent();	
 		}
