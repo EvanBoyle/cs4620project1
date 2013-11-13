@@ -66,6 +66,7 @@ class Node
     virtual void PrintChildren(int indentLevel)  {}
     virtual void ThisCheck(){};
     virtual char* CheckExpr(){return NULL;};
+    virtual void CallCheck(){};
 };
 
 class Scope

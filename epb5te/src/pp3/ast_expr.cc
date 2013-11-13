@@ -37,6 +37,28 @@ void This::ThisCheck(){
 	}
 }
 
+
+char* Call::CheckExpr(){
+	//printf("checking field acc\n");
+	Node* parentPtr = GetParent();
+	while(parentPtr){
+		FnDecl * decl=NULL;
+		if(parentPtr->GetScope()){
+			decl = parentPtr->GetScope()->GetSymTab()->Lookup(field->GetName());
+		}
+		
+		if(decl){
+			if(strcmp(decl->GetPrintNameForNode(),"FnDecl")==0){
+				return decl->GetRT()->Name();
+			}
+		}
+		
+		parentPtr=parentPtr->GetParent();
+	}
+	return "UNDEFINED";
+}
+
+
 char* FieldAccess::CheckExpr(){
 	//printf("checking field acc\n");
 	Node* parentPtr = GetParent();
@@ -91,6 +113,9 @@ char* ArithmeticExpr::CheckExpr(){
 		if(strcmp(rtype, "int")==0  || strcmp(rtype, "double")){
 			return rtype;
 		}
+		else{
+			ReportError::IncompatibleOperand(GetOperator(), rtype); 
+		}
 	}
 	return "UNDEFINED";
 }
@@ -141,10 +166,12 @@ char* EqualityExpr::CheckExpr(){
 		}
 		return ltype;
 	}
+	
 	return "UNDEFINED";
 }
 
 char* LogicalExpr::CheckExpr(){
+	printf("logical \n");
 	if(left && right){
 		char * ltype = left->CheckExpr();
 		char * rtype = right->CheckExpr();
@@ -155,10 +182,19 @@ char* LogicalExpr::CheckExpr(){
 		if(strcmp(ltype, "bool")==0 ){
 			return ltype;
 		}
+			ReportError::IncompatibleOperands(GetOperator(), ltype, rtype); 
+			return "UNDEFINED";
+		
 	}
-	char * rtype = right->CheckExpr();
-	if(strcmp(rtype, "bool")==0 ){
-			return rtype;
+	else{
+		char * rtype = right->CheckExpr();
+		printf("checking right expr \n");
+		if(strcmp("bool", rtype)==0){
+			return "bool";
+		}
+		else{
+			ReportError::IncompatibleOperand(GetOperator(), rtype); 
+		}
 	}
 	return "UNDEFINED";
 }

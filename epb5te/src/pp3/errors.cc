@@ -110,9 +110,9 @@ void ReportError::IncompatibleOperands(Operator *op, char *lhs, char *rhs) {
     OutputError(op->GetLocation(), s.str());
 }
      
-void ReportError::IncompatibleOperand(Operator *op, Type *rhs) {
+void ReportError::IncompatibleOperand(Operator *op, char *rhs) {
     stringstream s;
-    s << "Incompatible operand: " << op << " " << rhs;
+    s << "Incompatible operand: " << op->GetOp() << " " << rhs;
     OutputError(op->GetLocation(), s.str());
 }
 

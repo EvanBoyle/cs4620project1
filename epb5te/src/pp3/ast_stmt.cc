@@ -81,12 +81,104 @@ void ConditionalStmt::ThisCheck(){
 	}
 }
 
+void ConditionalStmt::TraverseCheck(){
+	if(body){
+		body->TraverseCheck();
+	}
+}
+
+void Program::CallCheck(){
+	
+}
+
+void ConditionalStmt::CallCheck(){
+	
+}
+
+void IfStmt::CallCheck(){
+	
+}
+void StmtBlock::CallCheck(){
+	
+}
+
+
+
+
 char* ConditionalStmt::CheckExpr(){
 	if(body){
 		body->CheckExpr();
 	}
-	return NULL;
+	if(test){
+		test->CheckExpr();
+	}
+	return "";
 }
+
+char* IfStmt::CheckExpr(){
+	if(body){
+		body->CheckExpr();
+	}
+	if(test){
+		test->CheckExpr();
+	}
+	if(elseBody){
+		elseBody->CheckExpr();
+	}
+	return "";
+}
+
+void IfStmt::ThisCheck(){
+	if(body){
+		body->ThisCheck();
+	}
+	if(test){
+		test->ThisCheck();
+	}
+	if(elseBody){
+		elseBody->ThisCheck();
+	}
+	return "";
+}
+
+void IfStmt::UndefCheck(){
+	if(body){
+		body->UndefCheck();
+	}
+	if(test){
+		test->UndefCheck();
+	}
+	if(elseBody){
+		elseBody->UndefCheck();
+	}
+	return "";
+}
+
+void IfStmt::TraverseCheck(){
+	if(body){
+		body->TraverseCheck();
+	}
+	if(test){
+		test->TraverseCheck();
+	}
+	if(elseBody){
+		elseBody->TraverseCheck();
+	}
+	return "";
+}
+
+
+void IfStmt::BuildSymTab(){
+	if(body){
+		body->BuildSymTab();
+	}
+	
+	if(elseBody){
+		elseBody->BuildSymTab();
+	}
+	return "";
+}
+
 
 
 void Program::UndefCheck(){
