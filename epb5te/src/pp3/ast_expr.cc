@@ -67,7 +67,7 @@ void Call::CallCheck(){
 						char * expected = decl->GetFormals()->Nth(i)->GetType()->Name();
 						char * given = actuals->Nth(i)->CheckExpr();
 							if(strcmp(expected,given)!=0){
-								ReportError::ArgMismatch(actuals->Nth(i), i, given, expected);
+								ReportError::ArgMismatch(actuals->Nth(i), i+1, given, expected);
 						}
 					}
 				
