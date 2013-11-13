@@ -117,6 +117,7 @@ class CompoundExpr : public Expr
     void ThisCheck();
     char* CheckExpr();
     Operator * GetOperator() {return op;}
+    void  CallCheck();
 };
 
 
@@ -223,6 +224,8 @@ class Call : public Expr
     const char *GetPrintNameForNode() { return "Call"; }
     void PrintChildren(int indentLevel);
     char* CheckExpr();
+    void CallCheck();
+    Identifier * GetId(){return field;}
 };
 
 class NewExpr : public Expr

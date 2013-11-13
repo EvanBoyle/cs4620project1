@@ -88,8 +88,9 @@ class FnDecl : public Decl
     const char *GetPrintNameForNode() { return "FnDecl"; }
     void PrintChildren(int indentLevel);
     void BuildSymTab();
+    List<VarDecl*>* GetFormals(){return formals;}
     Type * GetRT(){return returnType;}
-    List<VarDecl*> * GetFormals() {return formals;}
+    void CallCheck();
     bool Equals(FnDecl * other);
     void UndefCheck();
     void ThisCheck();

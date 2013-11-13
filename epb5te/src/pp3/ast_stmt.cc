@@ -42,6 +42,8 @@ void Program::Check() {
      printf("this checked\n");
      this->CheckExpr();
      printf("exprs checked \n");
+     this->CallCheck();
+     printf("calls checked \n");
 }
 
 void Program::ThisCheck(){
@@ -88,18 +90,40 @@ void ConditionalStmt::TraverseCheck(){
 }
 
 void Program::CallCheck(){
-	
+	for(int i = 0; i < decls->NumElements(); i++){
+		decls->Nth(i)->CallCheck();
+		
+	}
 }
 
 void ConditionalStmt::CallCheck(){
-	
+	if(body){
+		body->CallCheck();
+	}
 }
 
 void IfStmt::CallCheck(){
-	
+	if(body){
+		body->CallCheck();
+	}
+	if(body){
+		test->CallCheck();
+	}
+	if(elseBody){
+		elseBody->CallCheck();
+	}
 }
 void StmtBlock::CallCheck(){
-	
+	for(int i = 0; i < decls->NumElements(); i++){
+		
+		decls->Nth(i)->CallCheck();
+		
+	}
+	for(int i = 0; i < stmts->NumElements(); i++){
+		
+		stmts->Nth(i)->CallCheck();
+		
+	}
 }
 
 

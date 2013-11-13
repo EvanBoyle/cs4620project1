@@ -25,7 +25,11 @@ void VarDecl::PrintChildren(int indentLevel) {
    type->Print(indentLevel+1);
    id->Print(indentLevel+1);
 }
-
+void FnDecl::CallCheck(){
+	if(body){
+		body->CallCheck();
+	}
+}
 void FnDecl::UndefCheck(){
 	printf("fn check called\n");
 	

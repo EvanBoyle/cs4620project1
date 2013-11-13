@@ -37,6 +37,51 @@ void This::ThisCheck(){
 	}
 }
 
+void CompoundExpr::CallCheck(){
+	if(left){
+		left->CallCheck();
+	}
+	
+	if(right){
+		right->CallCheck();
+	}
+}
+
+void Call::CallCheck(){
+	
+	Node* parentPtr = GetParent();
+	while(parentPtr){
+		FnDecl * decl=NULL;
+		if(parentPtr->GetScope()){
+			decl = parentPtr->GetScope()->GetSymTab()->Lookup(field->GetName());
+		}
+		
+		if(decl){
+			if(strcmp(decl->GetPrintNameForNode(),"FnDecl")==0){
+				if(decl->GetFormals()->NumElements()!=actuals->NumElements()){
+					ReportError::NumArgsMismatch(GetId(),decl->GetFormals()->NumElements() , actuals->NumElements());
+				}
+				else{
+			
+					for(int i =0; i < decl->GetFormals()->NumElements();i++){
+						char * expected = decl->GetFormals()->Nth(i)->GetType()->Name();
+						char * given = actuals->Nth(i)->CheckExpr();
+							if(strcmp(expected,given)!=0){
+								ReportError::ArgMismatch(actuals->Nth(i), i, given, expected);
+						}
+					}
+				
+				}
+			}
+			
+			
+		}
+		
+		parentPtr=parentPtr->GetParent();
+	}
+	
+}
+
 
 char* Call::CheckExpr(){
 	//printf("checking field acc\n");
