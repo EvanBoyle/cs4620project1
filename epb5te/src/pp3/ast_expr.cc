@@ -112,7 +112,8 @@ char* Call::CheckExpr(){
 char* FieldAccess::CheckExpr(){
         //printf("checking field acc\n");
         Node* parentPtr = GetParent();
-        while(parentPtr){
+        if(!base){
+			while(parentPtr){
                 Node * decl=NULL;
                 if(parentPtr->GetScope()){
                         decl = parentPtr->GetScope()->GetSymTab()->Lookup(field->GetName());
@@ -126,7 +127,60 @@ char* FieldAccess::CheckExpr(){
                 }
                 
                 parentPtr=parentPtr->GetParent();
-        }
+			}
+		}
+		else{
+			char * nt = base->CheckExpr();
+			if(strcmp(nt, "int")==0||strcmp(nt, "bool")==0||strcmp(nt, "double")==0||strcmp(nt, "string")==0){
+				ReportError::FieldNotFoundInBase(field, nt);
+				return "UNDEFINED";
+			}
+			
+			
+			while(parentPtr){
+                Node * decl=NULL;
+                if(parentPtr->GetScope()){
+                        decl = parentPtr->GetScope()->GetSymTab()->Lookup(nt);
+                }
+                
+                if(decl){
+                        if(strcmp(decl->GetPrintNameForNode(),"ClassDecl")==0){
+							ClassDecl *cDecl= parentPtr->GetScope()->GetSymTab()->Lookup(nt);
+							bool exists = false;
+                            for(int i = 0; i < cDecl->GetMembers()->NumElements();i++){
+								if(strcmp(cDecl->GetMembers()->Nth(i)->Name(),field->GetName())==0){
+									exists = true;
+								}
+							}
+							if(!exists){
+								ReportError::FieldNotFoundInBase(field, nt);
+								return "UNDEFINED";
+							}
+							else{
+								Node* pptr = GetParent();
+								while(pptr){
+									if(strcmp(pptr->GetPrintNameForNode(),"ClassDecl")==0){
+										ClassDecl * cdecl = pptr;
+										if(strcmp(cdecl->Name(),nt)==0){
+											return nt;
+										}
+										else{
+											ReportError::InaccessibleField(field, nt);
+											return "Undefined";
+										}
+									}
+									pptr = pptr->GetParent();
+									
+								}
+							}   
+                        }
+                }
+                
+                parentPtr=parentPtr->GetParent();
+			}
+			
+		}
+
         return "UNDEFINED";
 }
 

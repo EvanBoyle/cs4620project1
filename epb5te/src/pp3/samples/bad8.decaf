@@ -16,6 +16,7 @@ void main() {
 
  red = New(Honda);
   red.wheels = 2;
+  red.trunk = 2;
   if (red.Park()) 
       red.horn = 1.0;
   red.Honk();
