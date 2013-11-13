@@ -237,6 +237,9 @@ class NewExpr : public Expr
     NewExpr(yyltype loc, NamedType *clsType);
     const char *GetPrintNameForNode() { return "NewExpr"; }
     void PrintChildren(int indentLevel);
+    
+    NamedType* GetType() {return cType;}
+    char * CheckExpr();
 };
 
 class NewArrayExpr : public Expr

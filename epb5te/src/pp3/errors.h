@@ -90,8 +90,8 @@ class ReportError
 
 
   // Errors used by semantic analyzer for field access
-  static void FieldNotFoundInBase(Identifier *field, Type *base);
-  static void InaccessibleField(Identifier *field, Type *base);
+  static void FieldNotFoundInBase(Identifier *field, char *base);
+  static void InaccessibleField(Identifier *field, char *base);
 
 
   // Errors used by semantic analyzer for control structures

@@ -14,7 +14,7 @@ void main() {
   Honda red;
   Boat blue;
 
-  red = New(Honda);
+ red = New(Honda);
   red.wheels = 2;
   if (red.Park()) 
       red.horn = 1.0;

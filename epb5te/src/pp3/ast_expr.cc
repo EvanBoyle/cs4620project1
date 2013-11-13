@@ -82,19 +82,24 @@ void Call::CallCheck(){
 	
 }
 
+char* NewExpr::CheckExpr(){
+	return GetType()->Name();
+}
+
 
 char* Call::CheckExpr(){
 	//printf("checking field acc\n");
 	Node* parentPtr = GetParent();
 	while(parentPtr){
-		FnDecl * decl=NULL;
+		Decl * decl=NULL;
 		if(parentPtr->GetScope()){
 			decl = parentPtr->GetScope()->GetSymTab()->Lookup(field->GetName());
 		}
 		
 		if(decl){
 			if(strcmp(decl->GetPrintNameForNode(),"FnDecl")==0){
-				return decl->GetRT()->Name();
+				FnDecl *fdecl = parentPtr->GetScope()->GetSymTab()->Lookup(field->GetName());
+				return fdecl->GetRT()->Name();
 			}
 		}
 		
@@ -105,23 +110,24 @@ char* Call::CheckExpr(){
 
 
 char* FieldAccess::CheckExpr(){
-	//printf("checking field acc\n");
-	Node* parentPtr = GetParent();
-	while(parentPtr){
-		VarDecl * decl=NULL;
-		if(parentPtr->GetScope()){
-			decl = parentPtr->GetScope()->GetSymTab()->Lookup(field->GetName());
-		}
-		
-		if(decl){
-			if(strcmp(decl->GetPrintNameForNode(),"VarDecl")==0){
-				return decl->GetType()->Name();
-			}
-		}
-		
-		parentPtr=parentPtr->GetParent();
-	}
-	return "UNDEFINED";
+        //printf("checking field acc\n");
+        Node* parentPtr = GetParent();
+        while(parentPtr){
+                Node * decl=NULL;
+                if(parentPtr->GetScope()){
+                        decl = parentPtr->GetScope()->GetSymTab()->Lookup(field->GetName());
+                }
+                
+                if(decl){
+                        if(strcmp(decl->GetPrintNameForNode(),"VarDecl")==0){
+							VarDecl *vDecl= parentPtr->GetScope()->GetSymTab()->Lookup(field->GetName());
+                                return vDecl->GetType()->Name();
+                        }
+                }
+                
+                parentPtr=parentPtr->GetParent();
+        }
+        return "UNDEFINED";
 }
 
 char* CompoundExpr::CheckExpr(){

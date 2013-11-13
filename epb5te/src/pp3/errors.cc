@@ -151,13 +151,13 @@ void ReportError::ReturnMismatch(ReturnStmt *rStmt, Type *given, Type *expected)
     OutputError(rStmt->GetLocation(), s.str());
 }
 
-void ReportError::FieldNotFoundInBase(Identifier *field, Type *base) {
+void ReportError::FieldNotFoundInBase(Identifier *field, char *base) {
     stringstream s;
-    s << base << " has no such field '" << field <<"'";
+    s << base << " has no such field '" << field->GetName() <<"'";
     OutputError(field->GetLocation(), s.str());
 }
      
-void ReportError::InaccessibleField(Identifier *field, Type *base) {
+void ReportError::InaccessibleField(Identifier *field, char *base) {
     stringstream s;
     s  << base << " field '" << field << "' only accessible within class scope";
     OutputError(field->GetLocation(), s.str());

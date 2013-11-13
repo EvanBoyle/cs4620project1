@@ -54,6 +54,7 @@ class ClassDecl : public Decl
               List<NamedType*> *implements, List<Decl*> *members);
     const char *GetPrintNameForNode() { return "ClassDecl"; }
     void PrintChildren(int indentLevel);
+    List<Decl*>* GetMembers(){return members;}
     void BuildSymTab();
     void TraverseCheck();
     void UndefCheck();
