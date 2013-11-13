@@ -46,6 +46,20 @@ void Program::Check() {
      printf("calls checked \n");
 }
 
+char* BreakStmt::CheckExpr(){
+	Node* parent = GetParent();
+	//printf("checking break \n");
+	while(parent){
+		if(strcmp(parent->GetPrintNameForNode(),"ForStmt")==0||strcmp(parent->GetPrintNameForNode(),"WhileStmt")==0){
+			return "";
+			
+		}
+		parent=parent->GetParent();
+	}
+	ReportError::BreakOutsideLoop(this);
+	return "";
+}
+
 void Program::ThisCheck(){
 	for(int i = 0; i < decls->NumElements(); i++){
 		decls->Nth(i)->ThisCheck();
@@ -134,7 +148,9 @@ char* ConditionalStmt::CheckExpr(){
 		body->CheckExpr();
 	}
 	if(test){
-		test->CheckExpr();
+		if(strcmp(test->CheckExpr(),"bool")!=0){
+			ReportError::TestNotBoolean(test);
+		}
 	}
 	return "";
 }
@@ -144,7 +160,9 @@ char* IfStmt::CheckExpr(){
 		body->CheckExpr();
 	}
 	if(test){
-		test->CheckExpr();
+		if(strcmp(test->CheckExpr(),"bool")!=0){
+			ReportError::TestNotBoolean(test);
+		}
 	}
 	if(elseBody){
 		elseBody->CheckExpr();
