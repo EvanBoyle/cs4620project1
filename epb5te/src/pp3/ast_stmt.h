@@ -148,6 +148,7 @@ class ReturnStmt : public Stmt
     ReturnStmt(yyltype loc, Expr *expr);
     const char *GetPrintNameForNode() { return "ReturnStmt"; }
     void PrintChildren(int indentLevel);
+    char* CheckExpr();
 };
 
 class PrintStmt : public Stmt

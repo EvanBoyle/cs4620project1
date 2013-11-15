@@ -188,12 +188,12 @@ char* CompoundExpr::CheckExpr(){
 	
 	if(left){
 		//left->CheckExpr();
-		printf(left->GetPrintNameForNode());
+		//printf(left->GetPrintNameForNode());
 		//printf("\n");
 	}
 	if(right){
 		//right->CheckExpr();
-		printf(right->GetPrintNameForNode());
+		//printf(right->GetPrintNameForNode());
 		//printf("\n");
 	}
 	return "UNDEFINED";
@@ -276,7 +276,7 @@ char* EqualityExpr::CheckExpr(){
 }
 
 char* LogicalExpr::CheckExpr(){
-	printf("logical \n");
+	//printf("logical \n");
 	if(left && right){
 		char * ltype = left->CheckExpr();
 		char * rtype = right->CheckExpr();
@@ -293,7 +293,7 @@ char* LogicalExpr::CheckExpr(){
 	}
 	else{
 		char * rtype = right->CheckExpr();
-		printf("checking right expr \n");
+		//printf("checking right expr \n");
 		if(strcmp("bool", rtype)==0){
 			return "bool";
 		}

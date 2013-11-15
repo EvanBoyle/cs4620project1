@@ -145,7 +145,7 @@ void ReportError::ArgMismatch(Expr *arg, int argIndex, char *given, char *expect
   OutputError(arg->GetLocation(), s.str());
 }
 
-void ReportError::ReturnMismatch(ReturnStmt *rStmt, Type *given, Type *expected) {
+void ReportError::ReturnMismatch(ReturnStmt *rStmt, char *given, char *expected) {
     stringstream s;
     s << "Incompatible return: " << given << " given, " << expected << " expected";
     OutputError(rStmt->GetLocation(), s.str());

@@ -31,19 +31,19 @@ void Program::Check() {
      *      and polymorphism in the node classes.
      */
      this->BuildSymTab();
-     printf("sym tab built \n");
+    // printf("sym tab built \n");
      this->TraverseCheck();
-     printf("class overides checked\n");
+    // printf("class overides checked\n");
      this->UndefCheck();
-     printf("undeclared checked\n");
+     //printf("undeclared checked\n");
      this->ImplCheck();
-     printf("implement interface checked \n");
+    // printf("implement interface checked \n");
      this->ThisCheck();
-     printf("this checked\n");
+     //printf("this checked\n");
      this->CheckExpr();
-     printf("exprs checked \n");
+     //printf("exprs checked \n");
      this->CallCheck();
-     printf("calls checked \n");
+     //printf("calls checked \n");
 }
 
 char* BreakStmt::CheckExpr(){
@@ -168,6 +168,28 @@ char* IfStmt::CheckExpr(){
 		elseBody->CheckExpr();
 	}
 	return "";
+}
+
+char* ReturnStmt::CheckExpr(){
+	//ReportError::ReturnMismatch(ReturnStmt *rStmt, Type *given, Type *expected)
+	char * type = "";
+	if(expr){
+		type = expr->CheckExpr();
+	}
+	Node* parentPtr = GetParent();
+	while(parentPtr){
+		if(strcmp(parentPtr->GetPrintNameForNode(),"FnDecl")==0){
+			FnDecl * fdecl = parentPtr;
+			char* rt = fdecl->GetRT()->Name();
+			if(strcmp(rt,type)!=0){
+				ReportError::ReturnMismatch(this, type, rt);
+				return "UNDEFINED";
+			}
+		}
+		parentPtr= parentPtr->GetParent();	
+	}
+	return type;
+	
 }
 
 void IfStmt::ThisCheck(){

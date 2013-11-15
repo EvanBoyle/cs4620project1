@@ -31,7 +31,7 @@ void FnDecl::CallCheck(){
 	}
 }
 void FnDecl::UndefCheck(){
-	printf("fn check called\n");
+	//printf("fn check called\n");
 	
 	for(int i = 0; i<formals->NumElements();i++){
 		
@@ -69,7 +69,7 @@ void FnDecl::UndefCheck(){
 	}
 	
 	if(body){
-		printf("calling undef on f body \n");
+		//printf("calling undef on f body \n");
 		((StmtBlock*)body)->UndefCheck();
 	}
 	
@@ -87,7 +87,7 @@ void VarDecl::UndefCheck(){
 			if(!parentPtr->GetScope()){
 				break;
 			}
-			printf(Name());
+			//printf(Name());
 			if(parentPtr->GetScope()->GetSymTab()->Lookup(GetType()->Name())){
 				if(strcmp("ClassDecl",parentPtr->GetScope()->GetSymTab()->Lookup(GetType()->Name())->GetPrintNameForNode())==0){
 					exists = true;
@@ -162,17 +162,17 @@ void ClassDecl::ImplCheck(){
 					bool flag = false;
 					for(int k = 0; k< members->NumElements();k++){
 						if(strcmp(members->Nth(k)->Name(), idecl->GetMembers()->Nth(j)->Name())==0){
-							printf(members->Nth(k)->Name());
-							printf("\n");
-							printf(idecl->GetMembers()->Nth(j)->Name());
-							printf("\n");
+							//printf(members->Nth(k)->Name());
+							//printf("\n");
+							//printf(idecl->GetMembers()->Nth(j)->Name());
+							//printf("\n");
 							flag = true;
 							break;
 							
 						}
 						
 					}
-						printf("%d %d\n", j, k);
+						//printf("%d %d\n", j, k);
 						if(flag == false){
 							doesImpl = false;
 							break;
@@ -191,7 +191,7 @@ void ClassDecl::ImplCheck(){
 
 void ClassDecl::UndefCheck(){
 	for(int i =0; i< implements->NumElements();i++){
-		printf(implements->Nth(i)->Name());
+		//printf(implements->Nth(i)->Name());
 		Node* parentPtr = this->GetParent();
 		bool exists = false;
 		while(parentPtr){
