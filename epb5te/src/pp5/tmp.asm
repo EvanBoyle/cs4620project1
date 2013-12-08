@@ -9,19 +9,16 @@
 	  sw $ra, 4($sp)	# save ra
 	  addiu $fp, $sp, 8	# set up new fp
 	  subu $sp, $sp, 16	# decrement sp to make space for locals/temps
-	# _tmp0 = 10
-	  li $t2, 10		# load constant value 10 into $t2
+	# _tmp0 = 4
+	  li $t2, 4		# load constant value 4 into $t2
 	  sw $t2, -12($fp)	# spill _tmp0 from $t2 to $fp-12
-	# c = _tmp0
-	  lw $t2, -12($fp)	# fill _tmp0 to $t2 from $fp-12
-	  sw $t2, -8($fp)	# spill c from $t2 to $fp-8
-	# _tmp1 = 3
-	  li $t2, 3		# load constant value 3 into $t2
+	# _tmp1 = 4
+	  li $t2, 4		# load constant value 4 into $t2
 	  sw $t2, -16($fp)	# spill _tmp1 from $t2 to $fp-16
-	# _tmp2 = c % _tmp1
-	  lw $t0, -8($fp)	# fill c to $t0 from $fp-8
+	# _tmp2 = _tmp0 < _tmp1
+	  lw $t0, -12($fp)	# fill _tmp0 to $t0 from $fp-12
 	  lw $t1, -16($fp)	# fill _tmp1 to $t1 from $fp-16
-	  rem $t2, $t0, $t1	
+	  slt $t2, $t0, $t1	
 	  sw $t2, -20($fp)	# spill _tmp2 from $t2 to $fp-20
 	# c = _tmp2
 	  lw $t2, -20($fp)	# fill _tmp2 to $t2 from $fp-20
@@ -30,8 +27,8 @@
 	  subu $sp, $sp, 4	# decrement sp to make space for param
 	  lw $t0, -8($fp)	# fill c to $t0 from $fp-8
 	  sw $t0, 4($sp)	# copy param value to stack
-	# LCall _PrintInt
-	  jal _PrintInt      	# jump to function
+	# LCall _PrintBool
+	  jal _PrintBool     	# jump to function
 	# PopParams 4
 	  add $sp, $sp, 4	# pop params off stack
 	# EndFunc

@@ -38,14 +38,19 @@ Location* ArithmeticExpr::Emit(CodeGenerator * generator){
 	if(strcmp(op->str(), "%")==0){
 		aop = "%";
 	}
-	if(left){
+	if(left!=NULL){
 		lloc = left->Emit(generator);
 	}
 	Location * rloc = right->Emit(generator);
-	if(lloc !=NULL){
+	if(left!=NULL){
 		return generator->GenBinaryOp(aop, lloc, rloc);
 		
 			
+		
+	}
+	else{
+		Location *lloc=generator->GenLoadConstant(-1);
+		return generator->GenBinaryOp("*", lloc, rloc);
 		
 	}
 	return NULL;
@@ -53,6 +58,92 @@ Location* ArithmeticExpr::Emit(CodeGenerator * generator){
 	
 }
 
+Location* LogicalExpr::Emit(CodeGenerator * generator){
+	Location * lloc;
+	char * aop;
+	if(strcmp(op->str(), "&&")==0){
+		aop = "&&";
+	}
+	if(strcmp(op->str(), "||")==0){
+		aop = "||";
+	}
+	if(strcmp(op->str(), "!")==0){
+		aop = "!";
+	}
+
+	if(left!=NULL){
+		lloc = left->Emit(generator);
+	}
+	Location * rloc = right->Emit(generator);
+	if(left!=NULL){
+		return generator->GenBinaryOp(aop, lloc, rloc);
+		
+			
+		
+	}
+	else{
+		Location *lloc=generator->GenLoadConstant(-1);
+		Location * tmploc=generator->GenBinaryOp("*", lloc, rloc);
+		Location *consloc=generator->GenLoadConstant(1);
+		return generator->GenBinaryOp("+", tmploc, consloc);
+		
+	}
+	return NULL;
+	//generator->GenBinaryOp("+",  
+	
+}
+
+Location* EqualityExpr::Emit(CodeGenerator * generator){
+	Location * lloc=left->Emit(generator);
+	Location * rloc = right->Emit(generator);
+	char * aop;
+	if(strcmp(op->str(), "==")==0){
+		aop = "==";
+		return generator->GenBinaryOp(aop, lloc, rloc);
+	}
+	if(strcmp(op->str(), "!=")==0){
+		aop = "!=";
+		Location* tmploc1 = generator->GenBinaryOp("==", lloc, rloc);
+		Location *consloc1=generator->GenLoadConstant(-1);
+		Location* tmploc2= generator->GenBinaryOp("*", tmploc1, consloc1);
+		Location *consloc2=generator->GenLoadConstant(1);
+		return generator->GenBinaryOp("+", tmploc2, consloc2);
+		
+	} 
+	
+}
+
+Location* RelationalExpr::Emit(CodeGenerator * generator){
+	Location * lloc=left->Emit(generator);
+	Location * rloc = right->Emit(generator);
+	char * aop;
+	if(strcmp(op->str(), "<")==0){
+		aop = "<";
+		return generator->GenBinaryOp(aop, lloc, rloc);
+	}
+	if(strcmp(op->str(), ">")==0){
+		aop = "<";
+		return generator->GenBinaryOp(aop, rloc, lloc);
+	}
+	if(strcmp(op->str(), "<=")==0){
+		aop = "<";
+		Location * less= generator->GenBinaryOp(aop, lloc, rloc);
+		Location *equal = generator->GenBinaryOp("==", rloc, lloc);
+		return generator->GenBinaryOp("||", less, equal);
+	}
+	if(strcmp(op->str(), ">=")==0){
+		aop = "<";
+		Location *less = generator->GenBinaryOp(aop, rloc, lloc);
+		Location *equal = generator->GenBinaryOp("==", rloc, lloc);
+		return generator->GenBinaryOp("||", less, equal);
+	}
+	
+	return NULL;
+	
+	
+	
+	
+}
 
 Location* ReadIntegerExpr::Emit(CodeGenerator* generator){
 	

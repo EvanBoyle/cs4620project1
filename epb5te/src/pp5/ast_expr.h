@@ -112,6 +112,7 @@ class RelationalExpr : public CompoundExpr
 {
   public:
     RelationalExpr(Expr *lhs, Operator *op, Expr *rhs) : CompoundExpr(lhs,op,rhs) {}
+    Location* Emit(CodeGenerator *generator);
 };
 
 class EqualityExpr : public CompoundExpr 
@@ -119,6 +120,7 @@ class EqualityExpr : public CompoundExpr
   public:
     EqualityExpr(Expr *lhs, Operator *op, Expr *rhs) : CompoundExpr(lhs,op,rhs) {}
     const char *GetPrintNameForNode() { return "EqualityExpr"; }
+    Location* Emit(CodeGenerator* generator);
 };
 
 class LogicalExpr : public CompoundExpr 
@@ -127,6 +129,7 @@ class LogicalExpr : public CompoundExpr
     LogicalExpr(Expr *lhs, Operator *op, Expr *rhs) : CompoundExpr(lhs,op,rhs) {}
     LogicalExpr(Operator *op, Expr *rhs) : CompoundExpr(op,rhs) {}
     const char *GetPrintNameForNode() { return "LogicalExpr"; }
+    Location* Emit(CodeGenerator *generator);
 };
 
 class AssignExpr : public CompoundExpr 
