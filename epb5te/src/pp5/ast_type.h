@@ -17,9 +17,10 @@
 class Type : public Node 
 {
   protected:
-    char *typeName;
+    
 
   public :
+  char *typeName;
     static Type *intType, *doubleType, *boolType, *voidType,
                 *nullType, *stringType, *errorType;
 

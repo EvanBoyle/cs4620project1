@@ -27,10 +27,13 @@
 #include <stdlib.h>   // for NULL
 #include "location.h"
 #include <iostream>
+#include "codegen.h"
 class Scope;
 class Decl;
 class Identifier;
 class Type;
+
+
 
 class Node 
 {
@@ -51,6 +54,7 @@ class Node
     typedef enum { kShallow, kDeep } lookup;
     virtual Decl *FindDecl(Identifier *id, lookup l = kDeep);
     virtual Scope *PrepareScope() { return NULL; }
+    virtual Location* Emit(CodeGenerator *generator){return NULL;}
 };
    
 

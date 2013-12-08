@@ -14,6 +14,11 @@ Location* CodeGenerator::ThisPtr= new Location(fpRelative, 4, "this");
   
 CodeGenerator::CodeGenerator()
 {
+	seg = fpRelative;
+	OffsetToNextLocal=OffsetToFirstLocal;
+	OffsetToNextGlobal = OffsetToFirstGlobal;
+	FnFrameSize=0;
+	VarLocations = new Hashtable<Location*>;
 }
 
 char *CodeGenerator::NewLabel()
@@ -35,6 +40,16 @@ Location *CodeGenerator::GenTempVar()
      in stack frame for use as temporary. Until you
      do that, the assert below will always fail to remind
      you this needs to be implemented  */
+     
+  result = new Location(seg, OffsetToNextLocal, temp);
+  
+  if(seg ==fpRelative){
+	  OffsetToNextLocal-=VarSize;
+	  FnFrameSize+=VarSize;
+  }
+  else{
+	  OffsetToNextGlobal+=VarSize;
+  }
   Assert(result != NULL);
   return result;
 }

@@ -7,6 +7,93 @@
 #include "ast_decl.h"
 #include <string.h>
 
+Location * IntConstant::Emit(CodeGenerator* generator){
+	Location * loc = generator->GenLoadConstant(value);
+	return loc;
+	
+}
+
+Location* ReadLineExpr::Emit(CodeGenerator* generator){
+	
+	return generator->GenBuiltInCall(ReadLine);
+	
+	
+}
+
+Location* ArithmeticExpr::Emit(CodeGenerator * generator){
+	Location * lloc;
+	char * aop;
+	if(strcmp(op->str(), "+")==0){
+		aop = "+";
+	}
+	if(strcmp(op->str(), "-")==0){
+		aop = "-";
+	}
+	if(strcmp(op->str(), "*")==0){
+		aop = "*";
+	}
+	if(strcmp(op->str(), "/")==0){
+		aop = "/";
+	}
+	if(strcmp(op->str(), "%")==0){
+		aop = "%";
+	}
+	if(left){
+		lloc = left->Emit(generator);
+	}
+	Location * rloc = right->Emit(generator);
+	if(lloc !=NULL){
+		return generator->GenBinaryOp(aop, lloc, rloc);
+		
+			
+		
+	}
+	return NULL;
+	//generator->GenBinaryOp("+",  
+	
+}
+
+
+Location* ReadIntegerExpr::Emit(CodeGenerator* generator){
+	
+	return generator->GenBuiltInCall(ReadInteger);
+	
+}
+
+
+
+Location* BoolConstant::Emit(CodeGenerator * generator){
+	Location * loc = generator->GenLoadConstant(value);
+	return loc;
+}
+
+Location* FieldAccess::Emit(CodeGenerator* generator){
+	Location * loc;
+	if(base == NULL){
+		if(generator->VarLocations->Lookup(field->GetName())==NULL){
+			loc =new Location(fpRelative, generator->OffsetToNextLocal, field->GetName());
+			generator->VarLocations->Enter(field->GetName(), loc);
+			generator->OffsetToNextLocal -=4;
+			generator->FnFrameSize+=4;
+			return loc;
+		}
+		else{
+			return generator->VarLocations->Lookup(field->GetName());
+		}
+		
+	}
+	return NULL;
+	
+}
+
+Location* AssignExpr::Emit(CodeGenerator * generator){
+	Location * lloc = left->Emit(generator);
+	Location * rloc = right->Emit(generator);
+	generator->GenAssign(lloc, rloc);
+	return rloc;
+	
+}
+
 
 
 IntConstant::IntConstant(yyltype loc, int val) : Expr(loc) {

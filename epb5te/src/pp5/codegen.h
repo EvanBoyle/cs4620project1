@@ -17,6 +17,7 @@
 #include <cstdlib>
 #include <list>
 #include "tac.h"
+#include "hashtable.h"
  
 
               // These codes are used to identify the built-in functions
@@ -42,6 +43,11 @@ class CodeGenerator {
                      OffsetToFirstParam = 4,
                      OffsetToFirstGlobal = 0;
     static const int VarSize = 4;
+    Segment seg;
+    int OffsetToNextLocal;
+    int OffsetToNextGlobal;
+    int FnFrameSize;
+    Hashtable<Location*> * VarLocations;
 
     static Location* ThisPtr;
 

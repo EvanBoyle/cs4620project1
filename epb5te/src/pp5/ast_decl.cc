@@ -105,6 +105,33 @@ FnDecl::FnDecl(Identifier *n, Type *r, List<VarDecl*> *d) : Decl(n) {
     body = NULL;
 }
 
+Location* FnDecl::Emit(CodeGenerator * generator){
+	//printf("found a function \n");
+	generator->FnFrameSize = 0;
+	const char* label;
+	if(strcmp(GetName(),"main")==0){
+		label = "main";
+	}
+	else{
+		label = GetName();
+	}
+	generator->seg = fpRelative;
+	generator->GenLabel(label);
+	BeginFunc *beginning = generator->GenBeginFunc();
+	if(body){
+		body->Emit(generator);
+	
+	}
+	
+	
+	beginning->SetFrameSize(generator->FnFrameSize);
+	
+	generator->GenEndFunc();
+	
+	return NULL;
+	
+}
+
 void FnDecl::SetFunctionBody(Stmt *b) { 
     (body=b)->SetParent(this);
 }

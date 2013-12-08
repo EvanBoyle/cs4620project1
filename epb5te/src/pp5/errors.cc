@@ -177,6 +177,10 @@ void ReportError::TestNotBoolean(Expr *expr) {
 void ReportError::BreakOutsideLoop(BreakStmt *bStmt) {
     OutputError(bStmt->GetLocation(), "break is only allowed inside a loop");
 }
+
+void ReportError::NoMainFound() {
+    OutputError(NULL, "Linker: function 'main' not defined");
+}
   
 /* Function: yyerror()
  * -------------------

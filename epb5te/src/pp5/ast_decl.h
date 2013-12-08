@@ -11,7 +11,7 @@
 
 #include "ast.h"
 #include "list.h"
-
+#include "codegen.h"
 class Type;
 class NamedType;
 class Identifier;
@@ -37,6 +37,7 @@ class Decl : public Node
     virtual bool IsInterfaceDecl() { return false; }
     virtual bool IsFnDecl() { return false; } 
     virtual bool IsMethodDecl() { return false; }
+    Location* Emit(CodeGenerator * generator){return NULL;}
 };
 
 class VarDecl : public Decl 
@@ -48,6 +49,7 @@ class VarDecl : public Decl
     VarDecl(Identifier *name, Type *type);
     void Check();
     Type *GetDeclaredType() { return type; }
+    
 };
 
 class ClassDecl : public Decl 
@@ -94,6 +96,7 @@ class FnDecl : public Decl
     bool IsMethodDecl();
     bool ConflictsWithPrevious(Decl *prev);
     bool MatchesPrototype(FnDecl *other);
+    Location* Emit(CodeGenerator * generator);
 };
 
 #endif

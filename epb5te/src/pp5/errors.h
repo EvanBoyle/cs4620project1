@@ -107,6 +107,8 @@ class ReportError
   // Returns number of error messages printed
   static int NumErrors() { return numErrors; }
   
+  static void NoMainFound();
+  
  private:
 
   static void UnderlineErrorInLine(const char *line, yyltype *pos);

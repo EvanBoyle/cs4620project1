@@ -9,6 +9,7 @@
 #include "utility.h"
 #include "errors.h"
 #include "parser.h"
+#include "codegen.h"
 
 
 /* Function: main()
@@ -22,6 +23,7 @@
 int main(int argc, char *argv[])
 {
     ParseCommandLine(argc, argv);
+    
   
     InitScanner();
     InitParser();

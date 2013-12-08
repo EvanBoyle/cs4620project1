@@ -1,0 +1,10 @@
+void main() {
+  int c;
+  
+  c = 10;
+  c = c % 3;
+  Print(c);
+  
+  
+
+}

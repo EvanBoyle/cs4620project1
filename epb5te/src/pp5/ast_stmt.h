@@ -12,6 +12,9 @@
 
 #include "list.h"
 #include "ast.h"
+#include "codegen.h"
+
+
 
 class Decl;
 class VarDecl;
@@ -25,6 +28,7 @@ class Program : public Node
   public:
      Program(List<Decl*> *declList);
      void Check();
+     Location* Emit(CodeGenerator * generator);
 };
 
 class Stmt : public Node
@@ -43,6 +47,7 @@ class StmtBlock : public Stmt
   public:
     StmtBlock(List<VarDecl*> *variableDeclarations, List<Stmt*> *statements);
     void Check();
+    Location* Emit(CodeGenerator * generator);
 };
 
   
@@ -111,6 +116,7 @@ class PrintStmt : public Stmt
     
   public:
     PrintStmt(List<Expr*> *arguments);
+    Location* Emit(CodeGenerator * generator);
 };
 
 

@@ -13,6 +13,7 @@
 #include "ast.h"
 #include "ast_stmt.h"
 #include "list.h"
+#include "tac.h"
 
 class NamedType; // for new
 class Type; // for NewArray
@@ -40,6 +41,7 @@ class IntConstant : public Expr
   
   public:
     IntConstant(yyltype loc, int val);
+    Location * Emit(CodeGenerator * generator);
 };
 
 class DoubleConstant : public Expr 
@@ -58,6 +60,7 @@ class BoolConstant : public Expr
     
   public:
     BoolConstant(yyltype loc, bool val);
+    Location* Emit(CodeGenerator* generator);
 };
 
 class StringConstant : public Expr 
@@ -102,6 +105,7 @@ class ArithmeticExpr : public CompoundExpr
   public:
     ArithmeticExpr(Expr *lhs, Operator *op, Expr *rhs) : CompoundExpr(lhs,op,rhs) {}
     ArithmeticExpr(Operator *op, Expr *rhs) : CompoundExpr(op,rhs) {}
+    Location* Emit(CodeGenerator* generator);
 };
 
 class RelationalExpr : public CompoundExpr 
@@ -130,6 +134,7 @@ class AssignExpr : public CompoundExpr
   public:
     AssignExpr(Expr *lhs, Operator *op, Expr *rhs) : CompoundExpr(lhs,op,rhs) {}
     const char *GetPrintNameForNode() { return "AssignExpr"; }
+    Location* Emit(CodeGenerator * generator);
 };
 
 class LValue : public Expr 
@@ -162,10 +167,12 @@ class FieldAccess : public LValue
 {
   protected:
     Expr *base;	// will be NULL if no explicit base
-    Identifier *field;
+    
     
   public:
+    Identifier *field;
     FieldAccess(Expr *base, Identifier *field); //ok to pass NULL base
+    Location* Emit(CodeGenerator * generator);
 };
 
 /* Like field access, call is used both for qualified base.field()
@@ -206,12 +213,14 @@ class ReadIntegerExpr : public Expr
 {
   public:
     ReadIntegerExpr(yyltype loc) : Expr(loc) {}
+    Location* Emit(CodeGenerator * generator);
 };
 
 class ReadLineExpr : public Expr
 {
   public:
     ReadLineExpr(yyltype loc) : Expr (loc) {}
+    Location* Emit(CodeGenerator * generator);
 };
 
     
