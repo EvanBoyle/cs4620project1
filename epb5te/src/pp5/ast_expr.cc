@@ -187,9 +187,41 @@ Location* BoolConstant::Emit(CodeGenerator * generator){
 	return loc;
 }
 
+Location* NewArrayExpr::Emit(CodeGenerator* generator){
+	
+	
+	char* makeArr = generator->NewLabel();
+	Location* arrSize = size->Emit(generator);
+	Location *zero = generator->GenLoadConstant(0);
+	Location* isZero = generator->GenBinaryOp("==", zero, arrSize);
+	Location* isLess = generator->GenBinaryOp("<", arrSize, zero);
+	Location* lessOrZero = generator->GenBinaryOp("||", isLess, isZero);
+	
+	generator->GenIfZ(lessOrZero, makeArr);
+	//here we throw error
+	Location * message = generator->GenLoadConstant("Decaf runtime error: Array size is <= 0\\n");
+	generator->GenBuiltInCall(PrintString, message);
+	generator->GenBuiltInCall(Halt);
+	//here we allocate
+	generator->GenLabel(makeArr);
+	Location * one = generator->GenLoadConstant(1);
+	Location * four = generator->GenLoadConstant(4);
+	Location * totalVars = generator->GenBinaryOp("+", one, arrSize);
+	Location * totalSize = generator->GenBinaryOp("*", totalVars, four);
+	Location * array = generator->GenBuiltInCall(Alloc, totalSize);
+	generator->GenStore(array, arrSize);
+	return array;
+	
+}
+
 Location* FieldAccess::Emit(CodeGenerator* generator){
 	Location * loc;
 	if(base == NULL){
+		//is a global
+		if(generator->GlobalVars->Lookup(field->GetName())!=NULL){
+			return generator->GlobalVars->Lookup(field->GetName());
+			
+		}
 		if(generator->VarLocations->Lookup(field->GetName())==NULL){
 			loc =new Location(fpRelative, generator->OffsetToNextLocal, field->GetName());
 			generator->VarLocations->Enter(field->GetName(), loc);
@@ -197,6 +229,7 @@ Location* FieldAccess::Emit(CodeGenerator* generator){
 			generator->FnFrameSize+=4;
 			return loc;
 		}
+		//is a temp already created
 		else{
 			return generator->VarLocations->Lookup(field->GetName());
 		}

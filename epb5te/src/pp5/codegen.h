@@ -48,6 +48,7 @@ class CodeGenerator {
     int OffsetToNextGlobal;
     int FnFrameSize;
     Hashtable<Location*> * VarLocations;
+    Hashtable<Location*> * GlobalVars;
 	char * BreakLabel;
     static Location* ThisPtr;
 

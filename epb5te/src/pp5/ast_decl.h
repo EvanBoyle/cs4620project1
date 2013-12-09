@@ -49,6 +49,7 @@ class VarDecl : public Decl
     VarDecl(Identifier *name, Type *type);
     void Check();
     Type *GetDeclaredType() { return type; }
+    Location* Emit(CodeGenerator* generator);
     
 };
 

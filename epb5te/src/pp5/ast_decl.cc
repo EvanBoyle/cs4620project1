@@ -24,6 +24,21 @@ VarDecl::VarDecl(Identifier *n, Type *t) : Decl(n) {
     Assert(n != NULL && t != NULL);
     (type=t)->SetParent(this);
 }
+
+Location* VarDecl::Emit(CodeGenerator* generator){
+	Node* dec = GetParent();
+	
+	Program * prog = dynamic_cast<Program *>(dec);
+	if(prog!=NULL){
+		generator->seg = gpRelative;
+		Location * glob = new Location(generator->seg, generator->OffsetToNextGlobal, GetName());
+		generator->OffsetToNextGlobal+=generator->VarSize;
+		generator->GlobalVars->Enter(GetName(), glob);
+		generator->seg=fpRelative;
+	}
+	return NULL;
+	
+}
   
 void VarDecl::Check() { type->Check(); }
 

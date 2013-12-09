@@ -211,6 +211,7 @@ class NewArrayExpr : public Expr
     
   public:
     NewArrayExpr(yyltype loc, Expr *sizeExpr, Type *elemType);
+    Location * Emit(CodeGenerator* generator);
 };
 
 class ReadIntegerExpr : public Expr

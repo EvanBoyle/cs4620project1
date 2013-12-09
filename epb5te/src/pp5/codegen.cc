@@ -19,6 +19,7 @@ CodeGenerator::CodeGenerator()
 	OffsetToNextGlobal = OffsetToFirstGlobal;
 	FnFrameSize=0;
 	VarLocations = new Hashtable<Location*>;
+	GlobalVars = new Hashtable<Location*>;
 	BreakLabel = "";
 }
 
@@ -42,14 +43,17 @@ Location *CodeGenerator::GenTempVar()
      do that, the assert below will always fail to remind
      you this needs to be implemented  */
      
-  result = new Location(seg, OffsetToNextLocal, temp);
+  
   
   if(seg ==fpRelative){
+	  result = new Location(seg, OffsetToNextLocal, temp);
 	  OffsetToNextLocal-=VarSize;
 	  FnFrameSize+=VarSize;
   }
   else{
+	  result = new Location(seg, OffsetToNextGlobal, temp);
 	  OffsetToNextGlobal+=VarSize;
+	  
   }
   Assert(result != NULL);
   return result;
