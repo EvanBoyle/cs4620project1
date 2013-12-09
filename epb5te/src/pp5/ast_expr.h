@@ -191,6 +191,7 @@ class Call : public Expr
     
   public:
     Call(yyltype loc, Expr *base, Identifier *field, List<Expr*> *args);
+    Location* Emit(CodeGenerator * generator);
 };
 
 class NewExpr : public Expr

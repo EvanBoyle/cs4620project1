@@ -85,10 +85,11 @@ class FnDecl : public Decl
 {
   protected:
     List<VarDecl*> *formals;
-    Type *returnType;
+    
     Stmt *body;
     
   public:
+    Type *returnType;
     FnDecl(Identifier *name, Type *returnType, List<VarDecl*> *formals);
     void SetFunctionBody(Stmt *b);
     void Check();

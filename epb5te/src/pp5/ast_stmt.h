@@ -76,12 +76,14 @@ class ForStmt : public LoopStmt
   
   public:
     ForStmt(Expr *init, Expr *test, Expr *step, Stmt *body);
+    Location* Emit(CodeGenerator* generator);
 };
 
 class WhileStmt : public LoopStmt 
 {
   public:
     WhileStmt(Expr *test, Stmt *body) : LoopStmt(test, body) {}
+    Location* Emit(CodeGenerator* generator);
 };
 
 class IfStmt : public ConditionalStmt 
@@ -92,12 +94,14 @@ class IfStmt : public ConditionalStmt
   public:
     IfStmt(Expr *test, Stmt *thenBody, Stmt *elseBody);
     void Check();
+    Location* Emit(CodeGenerator * generator);
 };
 
 class BreakStmt : public Stmt 
 {
   public:
     BreakStmt(yyltype loc) : Stmt(loc) {}
+    Location* Emit(CodeGenerator* generator);
 };
 
 class ReturnStmt : public Stmt  
@@ -107,6 +111,7 @@ class ReturnStmt : public Stmt
   
   public:
     ReturnStmt(yyltype loc, Expr *expr);
+    Location* Emit(CodeGenerator* generator);
 };
 
 class PrintStmt : public Stmt

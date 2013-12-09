@@ -2,18 +2,15 @@
 
 void main() {
   int c;
-  int s;
-  s = 10;
+  
 
-  
-  //c = test(4, 5);
+ 
+  c= test(4, 5);
   Print(c);
-  Print(s);
-  
+   
 }
 
 int test(int a, int b) {
-	int a;
-	a = 2;
+  
   return a + b;
 }

@@ -24,6 +24,20 @@ void Program::Check() {
     decls->CheckAll();
 }
 
+Location * ReturnStmt::Emit(CodeGenerator* generator){
+	if(expr!=NULL){
+		Location * returnLoc = expr->Emit(generator);
+		generator->GenReturn(returnLoc);
+		
+	}
+	else{
+		//generator->GenReturn();
+	}
+	return NULL;
+	
+	
+}
+
 Location *  Program::Emit(CodeGenerator * generator){
 	//printf("at the program \n");
 	if(nodeScope->LookupName("main")==NULL){
@@ -40,6 +54,84 @@ Location *  Program::Emit(CodeGenerator * generator){
 	gen->DoFinalCodeGen();
 	return NULL;
 	
+	
+}
+
+Location* IfStmt::Emit(CodeGenerator* generator){
+	if(elseBody!=NULL){
+		char * l0 = generator->NewLabel();
+		char * l1 = generator->NewLabel();
+		Location * testLoc = test->Emit(generator);
+		generator->GenIfZ(testLoc, l0);
+		body->Emit(generator);
+		generator->GenGoto(l1);
+		generator->GenLabel(l0);
+		elseBody->Emit(generator);
+		generator->GenLabel(l1);
+		
+	}
+	else{
+		char * l0 = generator->NewLabel();
+		Location * testLoc = test->Emit(generator);
+		generator->GenIfZ(testLoc, l0);
+		body->Emit(generator);
+		generator->GenLabel(l0);
+	}
+	return NULL;
+	
+}
+
+Location* WhileStmt::Emit(CodeGenerator* generator){
+	//save old label, create start and break labels, set break label
+	char * previousBreak = generator->BreakLabel;
+	char* startLabel = generator->NewLabel();
+	char* newBreak = generator->NewLabel();
+	generator->BreakLabel = newBreak;
+	//emit start label
+	generator->GenLabel(startLabel);
+	Location * testLoc = test->Emit(generator);
+	generator->GenIfZ(testLoc, newBreak);
+	body->Emit(generator);
+	generator->GenGoto(startLabel);
+	generator->GenLabel(newBreak);
+	
+	
+	//restore previous break label
+	generator->BreakLabel= previousBreak;
+	
+	return NULL;
+	
+	
+}
+
+Location* ForStmt::Emit(CodeGenerator* generator){
+	//save old label, create start and break labels, set break label
+	char * previousBreak = generator->BreakLabel;
+	char* startLabel = generator->NewLabel();
+	char* newBreak = generator->NewLabel();
+	generator->BreakLabel = newBreak;
+	//emit start label
+	init->Emit(generator);
+	generator->GenLabel(startLabel);
+	Location * testLoc = test->Emit(generator);
+	generator->GenIfZ(testLoc, newBreak);
+	body->Emit(generator);
+	step->Emit(generator);
+	generator->GenGoto(startLabel);
+	generator->GenLabel(newBreak);
+	
+	
+	//restore previous break label
+	generator->BreakLabel= previousBreak;
+	
+	return NULL;
+	
+	
+}
+
+Location* BreakStmt::Emit(CodeGenerator* generator){
+	generator->GenGoto(generator->BreakLabel);
+	return NULL;
 	
 }
 

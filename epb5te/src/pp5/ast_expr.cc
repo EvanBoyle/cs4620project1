@@ -145,6 +145,35 @@ Location* RelationalExpr::Emit(CodeGenerator * generator){
 	
 }
 
+Location * Call::Emit(CodeGenerator* generator){
+	
+	Decl * dec = FindDecl(field);
+	FnDecl * fdec = dynamic_cast<FnDecl*>(dec);
+	if(fdec!=NULL){
+		if(fdec->IsMethodDecl()==false){
+			int paramBytes = 0;
+			
+			for(int i = 0; i< actuals->NumElements(); i++){
+				generator->GenPushParam(actuals->Nth(i)->Emit(generator));
+				paramBytes+=4;
+			}
+			std::string label = "_";
+			label +=fdec->GetName();
+			bool hasReturn = strcmp(fdec->returnType->typeName, "void")==0;
+			
+			Location * ret = generator->GenLCall(label.c_str(), !hasReturn);
+			generator->GenPopParams(paramBytes);
+			return ret;
+		}
+		else{
+			//is a class call and we must figure out what to do
+			
+		}
+	}
+	return NULL;
+	
+}
+
 Location* ReadIntegerExpr::Emit(CodeGenerator* generator){
 	
 	return generator->GenBuiltInCall(ReadInteger);

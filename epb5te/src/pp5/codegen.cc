@@ -19,6 +19,7 @@ CodeGenerator::CodeGenerator()
 	OffsetToNextGlobal = OffsetToFirstGlobal;
 	FnFrameSize=0;
 	VarLocations = new Hashtable<Location*>;
+	BreakLabel = "";
 }
 
 char *CodeGenerator::NewLabel()

@@ -1,7 +1,16 @@
 void main() {
-  bool c;
-  c = 4<4;
- 
+  int c;
+  c=0;
+  while(c<10){
+	while(c<20){
+	  Print(true);
+	  break;
+	}
+	Print(c);
+	c = c + 1;
+  }
+
+  
   Print(c);
   
   

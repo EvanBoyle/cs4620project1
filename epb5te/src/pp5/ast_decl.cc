@@ -7,6 +7,7 @@
 #include "ast_stmt.h"
 #include "scope.h"
 #include "errors.h"
+#include <string.h>
         
          
 Decl::Decl(Identifier *n) : Node(*n->GetLocation()) {
@@ -106,17 +107,40 @@ FnDecl::FnDecl(Identifier *n, Type *r, List<VarDecl*> *d) : Decl(n) {
 }
 
 Location* FnDecl::Emit(CodeGenerator * generator){
+	//generator->VarLocations = new Hashtable<Location*>;
 	//printf("found a function \n");
+	
 	generator->FnFrameSize = 0;
-	const char* label;
+	std::string label;
 	if(strcmp(GetName(),"main")==0){
 		label = "main";
 	}
+	else if(IsMethodDecl()==false){
+		//printf("inside the good stuff");
+		
+		char* prefix = "_";
+		label +="_";
+		label +=GetName();
+		
+		int offset = 0;
+		for(int i = 0; i< formals->NumElements(); i++){
+			offset = (i+1)*4;
+			Location* param = new Location(fpRelative, offset, formals->Nth(i)->GetName());
+			//printf(formals->Nth(i)->GetId()->GetName());
+			generator->VarLocations->Enter(formals->Nth(i)->GetName(), param);
+		}
+		
+	}
 	else{
-		label = GetName();
+		ClassDecl * parent = dynamic_cast<ClassDecl*>(GetParent());
+		if(parent!=NULL){
+			label += parent->GetName();
+			label += "_";
+			label += GetName();
+		}
 	}
 	generator->seg = fpRelative;
-	generator->GenLabel(label);
+	generator->GenLabel(label.c_str());
 	BeginFunc *beginning = generator->GenBeginFunc();
 	if(body){
 		body->Emit(generator);
@@ -127,6 +151,7 @@ Location* FnDecl::Emit(CodeGenerator * generator){
 	beginning->SetFrameSize(generator->FnFrameSize);
 	
 	generator->GenEndFunc();
+	//generator->seg = gpRelative;
 	
 	return NULL;
 	
