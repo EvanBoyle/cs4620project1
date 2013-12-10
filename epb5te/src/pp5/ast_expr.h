@@ -22,6 +22,7 @@ class Type; // for NewArray
 class Expr : public Stmt 
 {
   public:
+	virtual Type* GetType(){return NULL;}
     Expr(yyltype loc) : Stmt(loc) {}
     Expr() : Stmt() {}
 };
@@ -176,6 +177,7 @@ class FieldAccess : public LValue
     
   public:
     Identifier *field;
+    Type* GetType();
     FieldAccess(Expr *base, Identifier *field); //ok to pass NULL base
     Location* Emit(CodeGenerator * generator);
 };
@@ -187,11 +189,13 @@ class FieldAccess : public LValue
 class Call : public Expr 
 {
   protected:
+	Type* GetType();
     Expr *base;	// will be NULL if no explicit base
     Identifier *field;
     List<Expr*> *actuals;
     
   public:
+	
     Call(yyltype loc, Expr *base, Identifier *field, List<Expr*> *args);
     Location* Emit(CodeGenerator * generator);
 };
@@ -203,6 +207,7 @@ class NewExpr : public Expr
     
   public:
     NewExpr(yyltype loc, NamedType *clsType);
+    Location* Emit(CodeGenerator* generator);
 };
 
 class NewArrayExpr : public Expr

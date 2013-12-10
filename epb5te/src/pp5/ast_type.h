@@ -35,11 +35,12 @@ class Type : public Node
 class NamedType : public Type 
 {
   protected:
-    Identifier *id;
-    Decl *cachedDecl; // either class or inteface
-    bool isError;
+    
     
   public:
+  Identifier *id;
+    Decl *cachedDecl; // either class or inteface
+    bool isError;
     NamedType(Identifier *i);
     
     void PrintToStream(std::ostream& out) { out << id; }

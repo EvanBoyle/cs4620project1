@@ -49,6 +49,7 @@ class CodeGenerator {
     int FnFrameSize;
     Hashtable<Location*> * VarLocations;
     Hashtable<Location*> * GlobalVars;
+    Hashtable<Hashtable<int>*> * Classes;
 	char * BreakLabel;
     static Location* ThisPtr;
 

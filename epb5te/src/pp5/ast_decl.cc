@@ -71,6 +71,74 @@ void ClassDecl::Check() {
     members->CheckAll();
 }
 
+Location * ClassDecl::Emit(CodeGenerator* generator){
+	generator->Classes->Enter(GetName(), new Hashtable<int>);
+	Hashtable<int> *cTable = generator->Classes->Lookup(GetName());
+	int byteOffset = 4;
+	List<const char *> *vTable = new List<const char *>;
+	if(extends != NULL){
+		Decl * dec = FindDecl(extends->GetId());
+		ClassDecl * cdec = dynamic_cast<ClassDecl*>(dec);
+		if(cdec!=NULL){
+			for(int i = 0; i<cdec->members->NumElements(); i++){
+				VarDecl * vdec = dynamic_cast<VarDecl*>(cdec->members->Nth(i));
+				FnDecl * fdec =  dynamic_cast<FnDecl*>(cdec->members->Nth(i));
+				if(vdec!=NULL){
+					cTable->Enter(vdec->GetName(), byteOffset);
+					byteOffset+=4;
+					
+				}
+				if(fdec!=NULL){
+					bool add = true;
+					for(int j = 0; j < members->NumElements();j++){
+						if(strcmp( members->Nth(j)->GetName(), cdec->members->Nth(i)->GetName())==0){
+							add = false;
+						}
+						
+					}
+					if(add){
+						std::string label= cdec->GetName();
+						label+="_";
+						label += fdec->GetName();
+						vTable->Append(strdup(label.c_str()));
+						
+					}
+					
+					
+				}
+			}
+			
+		}
+		
+	}
+	
+	for(int i = 0; i<members->NumElements(); i++){
+		members->Nth(i)->Emit(generator);
+		VarDecl * vdec = dynamic_cast<VarDecl*>(members->Nth(i));
+		FnDecl * fdec =  dynamic_cast<FnDecl*>(members->Nth(i));
+		if(vdec!=NULL){
+			cTable->Enter(vdec->GetName(), byteOffset);
+			byteOffset+=4;
+			
+		}
+		if(fdec!=NULL){
+			std::string label= GetName();
+			label+="_";
+			label += fdec->GetName();
+			vTable->Append(strdup(label.c_str()));
+		}
+	}
+	
+	cTable->Enter("*size*", byteOffset);
+	
+	generator->GenVTable(GetName(), vTable);
+	return NULL;
+	
+}
+
+
+
+
 // This is not done very cleanly. I should sit down and sort this out. Right now
 // I was using the copy-in strategy from the old compiler, but I think the link to
 // parent may be the better way now.

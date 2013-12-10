@@ -56,18 +56,20 @@ class VarDecl : public Decl
 class ClassDecl : public Decl 
 {
   protected:
-    List<Decl*> *members;
+    
     NamedType *extends;
     List<NamedType*> *implements;
     Type *cType;
     List<InterfaceDecl*> *convImp;
 
   public:
+  List<Decl*> *members;
     ClassDecl(Identifier *name, NamedType *extends, 
               List<NamedType*> *implements, List<Decl*> *members);
     void Check();
     bool IsClassDecl() { return true; }
     Scope *PrepareScope();
+    Location * Emit(CodeGenerator* generator);
 };
 
 class InterfaceDecl : public Decl 

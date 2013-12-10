@@ -210,6 +210,21 @@ Location* BoolConstant::Emit(CodeGenerator * generator){
 	return loc;
 }
 
+
+Location * NewExpr::Emit(CodeGenerator* generator){
+	Decl * dec = cType->GetDeclForType();
+	const char * name = dec->GetName();
+	Hashtable<int> * cTable = generator->Classes->Lookup(name);
+	int size = cTable->Lookup("*size*");
+	Location* csize = generator->GenLoadConstant(size);
+	
+	Location* newClass = generator->GenBuiltInCall(Alloc, csize);
+	Location *vTable = generator->GenLoadLabel(name);
+	generator->GenStore(newClass, vTable);
+	return newClass;
+	
+}
+
 Location* NewArrayExpr::Emit(CodeGenerator* generator){
 	
 	
@@ -277,15 +292,50 @@ Location* ArrayAccess::Emit(CodeGenerator* generator){
 	return generator->GenLoad(addr);
 }
 
+Type* Call::GetType(){
+	Decl * dec = FindDecl(field);
+	FnDecl *fdec =dynamic_cast<FnDecl*>(dec);
+	if(fdec!=NULL){
+		return fdec->returnType;
+	}
+	return NULL;
+	
+	
+}
+
+Type* FieldAccess::GetType(){
+	Decl * dec = FindDecl(field);
+	VarDecl *var =dynamic_cast<VarDecl*>(dec);
+	
+	if(var!=NULL){
+		return var->GetDeclaredType();
+	}
+	return NULL;
+	
+}
+
 
 Location* FieldAccess::Emit(CodeGenerator* generator){
+	bool writing=false;
+	Node* aParent = GetParent();
+	AssignExpr * assign = dynamic_cast<AssignExpr*>(aParent);
+	if(assign!=NULL){
+		if(assign->left == this){
+			writing = true;
+			
+		}
+	}
+	
+	
 	Location * loc;
+	
 	if(base == NULL){
 		//is a global
 		if(generator->GlobalVars->Lookup(field->GetName())!=NULL){
 			return generator->GlobalVars->Lookup(field->GetName());
 			
 		}
+		//doesnt exists as a temp
 		if(generator->VarLocations->Lookup(field->GetName())==NULL){
 			loc =new Location(fpRelative, generator->OffsetToNextLocal, field->GetName());
 			generator->VarLocations->Enter(field->GetName(), loc);
@@ -293,10 +343,32 @@ Location* FieldAccess::Emit(CodeGenerator* generator){
 			generator->FnFrameSize+=4;
 			return loc;
 		}
+		Decl* dec = FindDecl(field);
+		Node* decP = dec->GetParent();
+		if()
+		
+		
 		//is a temp already created
 		else{
 			return generator->VarLocations->Lookup(field->GetName());
 		}
+		
+	}
+	//this is for a class
+	else{/*
+		Type * t = base->GetType();
+		NamedType* btype =  dynamic_cast<NamedType*>(t);
+		if(btype!=NULL){
+			Hashtable <int> *cTable = generator->Classes->Lookup(btype->GetId()->GetName());
+			int offset = cTable->Lookup(field);
+			Location* baseLoc = base->Emit(generator);
+			Location* off = generator->GenLoadConstant(offset);
+			Location* varLoc = generator->GenBinaryOp("+", off, baseLoc);
+			if(writing){
+				return varLoc;
+			}
+			return generator->GenLoad(varLoc);
+		}*/
 		
 	}
 	return NULL;

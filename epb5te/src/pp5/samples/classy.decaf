@@ -1,0 +1,24 @@
+class Base{
+	void hi(){
+		Print(1);
+	
+	}
+	
+
+}
+class Derived extends Base{
+	void hi(){
+		Print(2);
+	
+	}
+
+
+}
+void main(){
+	Base b;
+	b = New(Base);
+	
+
+
+
+}

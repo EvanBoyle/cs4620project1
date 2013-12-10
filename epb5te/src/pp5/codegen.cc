@@ -20,6 +20,7 @@ CodeGenerator::CodeGenerator()
 	FnFrameSize=0;
 	VarLocations = new Hashtable<Location*>;
 	GlobalVars = new Hashtable<Location*>;
+	Classes = new Hashtable<Hashtable<int>*> ;
 	BreakLabel = "";
 }
 
