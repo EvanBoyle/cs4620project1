@@ -343,9 +343,9 @@ Location* FieldAccess::Emit(CodeGenerator* generator){
 			generator->FnFrameSize+=4;
 			return loc;
 		}
-		Decl* dec = FindDecl(field);
-		Node* decP = dec->GetParent();
-		if()
+		//Decl* dec = FindDecl(field);
+		//Node* decP = dec->GetParent();
+		
 		
 		
 		//is a temp already created
@@ -355,7 +355,9 @@ Location* FieldAccess::Emit(CodeGenerator* generator){
 		
 	}
 	//this is for a class
-	else{/*
+	else{
+		return NULL;
+		/*
 		Type * t = base->GetType();
 		NamedType* btype =  dynamic_cast<NamedType*>(t);
 		if(btype!=NULL){
@@ -367,10 +369,10 @@ Location* FieldAccess::Emit(CodeGenerator* generator){
 			if(writing){
 				return varLoc;
 			}
-			return generator->GenLoad(varLoc);
-		}*/
+			return generator->GenLoad(varLoc);*/
+		}
 		
-	}
+	
 	return NULL;
 	
 }
