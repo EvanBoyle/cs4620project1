@@ -149,26 +149,49 @@ Location * Call::Emit(CodeGenerator* generator){
 	
 	Decl * dec = FindDecl(field);
 	FnDecl * fdec = dynamic_cast<FnDecl*>(dec);
-	if(fdec!=NULL){
-		if(fdec->IsMethodDecl()==false){
-			int paramBytes = 0;
+	if(base==NULL){
+		if(fdec!=NULL){
+			if(fdec->IsMethodDecl()==false){
+				int paramBytes = 0;
 			
-			for(int i = 0; i< actuals->NumElements(); i++){
-				generator->GenPushParam(actuals->Nth(i)->Emit(generator));
-				paramBytes+=4;
+				for(int i = 0; i< actuals->NumElements(); i++){
+					generator->GenPushParam(actuals->Nth(i)->Emit(generator));
+					paramBytes+=4;
+				}
+				std::string label = "_";
+				label +=fdec->GetName();
+				bool hasReturn = strcmp(fdec->returnType->typeName, "void")==0;
+			
+				Location * ret = generator->GenLCall(label.c_str(), !hasReturn);
+				generator->GenPopParams(paramBytes);
+				return ret;
 			}
-			std::string label = "_";
-			label +=fdec->GetName();
-			bool hasReturn = strcmp(fdec->returnType->typeName, "void")==0;
+			else{
+			//implicit this method call is a class call and we must figure out what to do
 			
-			Location * ret = generator->GenLCall(label.c_str(), !hasReturn);
-			generator->GenPopParams(paramBytes);
-			return ret;
+			}
 		}
-		else{
-			//is a class call and we must figure out what to do
+
+	}
+	else{
+		FieldAccess * array = dynamic_cast<FieldAccess*>(base);
+		Location * baseLoc = base->Emit(generator);
+		//foo.bar() or array.length()
+		if(array!=NULL){
+			Decl* arrDec = FindDecl(array->field);
+			VarDecl* arrVDec = dynamic_cast<VarDecl*>(arrDec);
+			if(arrVDec!=NULL){
+				ArrayType * at = dynamic_cast<ArrayType*>(arrVDec->GetDeclaredType());
+				if(at!=NULL){
+					Location * ptr = generator->GenLoad(baseLoc);
+					return ptr;
+					
+				}
+			}
 			
 		}
+		
+		
 	}
 	return NULL;
 	
@@ -214,6 +237,47 @@ Location* NewArrayExpr::Emit(CodeGenerator* generator){
 	
 }
 
+Location* ArrayAccess::Emit(CodeGenerator* generator){
+	bool writing=false;
+	Node* aParent = GetParent();
+	AssignExpr * assign = dynamic_cast<AssignExpr*>(aParent);
+	if(assign!=NULL){
+		if(assign->left == this){
+			writing = true;
+			
+		}
+	}
+	
+	Location *aLoc = base->Emit(generator);
+	Location *aSize = generator->GenLoad(aLoc);
+	Location *sub = subscript->Emit(generator);
+	Location *zero = generator->GenLoadConstant(0);
+	Location *lessZ= generator->GenBinaryOp("<", sub, zero);
+	Location *lessS= generator->GenBinaryOp("<", aSize, sub);
+	Location *equal = generator->GenBinaryOp("==", aSize, sub);
+	Location * test = generator->GenBinaryOp("||", equal, lessZ);
+	char* access = generator->NewLabel();
+	generator->GenIfZ(test, access);
+	//throw error
+	Location * message = generator->GenLoadConstant("Decaf runtime error: Array subscript out of bounds\\n");
+	generator->GenBuiltInCall(PrintString, message);
+	generator->GenBuiltInCall(Halt);
+	
+	//access elm
+	generator->GenLabel(access);
+	Location * one = generator->GenLoadConstant(1);
+	Location * four = generator->GenLoadConstant(4);
+	Location * offBytes = generator->GenBinaryOp("+", one, sub);
+	Location * offset = generator->GenBinaryOp("*", offBytes, four);
+	Location * addr = generator->GenBinaryOp("+", offset, aLoc);
+	//return addr;
+	if(writing){
+		return addr;
+	}
+	return generator->GenLoad(addr);
+}
+
+
 Location* FieldAccess::Emit(CodeGenerator* generator){
 	Location * loc;
 	if(base == NULL){
@@ -240,8 +304,16 @@ Location* FieldAccess::Emit(CodeGenerator* generator){
 }
 
 Location* AssignExpr::Emit(CodeGenerator * generator){
+	ArrayAccess *access = dynamic_cast<ArrayAccess*>(left);
+	
 	Location * lloc = left->Emit(generator);
 	Location * rloc = right->Emit(generator);
+	
+	if(access!=NULL){
+		generator->GenStore(lloc, rloc);
+		return rloc;
+	}
+	
 	generator->GenAssign(lloc, rloc);
 	return rloc;
 	

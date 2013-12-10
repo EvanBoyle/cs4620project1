@@ -3,7 +3,15 @@
 
 void main() {
   int[]c;
-  c = NewArray(-10, int);
+  int i;
+  int d;
+  c = NewArray(10, int);
+  for(i = 0; i < 10; i = i + 1){
+	c[i] = i;
+	d = c[i];
+	Print(c[i]);
+  
+  }
   
   
   

@@ -92,10 +92,11 @@ class Operator : public Node
 class CompoundExpr : public Expr
 {
   protected:
-    Operator *op;
-    Expr *left, *right; // left will be NULL if unary
+    
     
   public:
+  Operator *op;
+    Expr *left, *right; // left will be NULL if unary
     CompoundExpr(Expr *lhs, Operator *op, Expr *rhs); // for binary
     CompoundExpr(Operator *op, Expr *rhs);             // for unary
 };
@@ -159,6 +160,7 @@ class ArrayAccess : public LValue
     
   public:
     ArrayAccess(yyltype loc, Expr *base, Expr *subscript);
+    Location* Emit(CodeGenerator* generator);
 };
 
 /* Note that field access is used both for qualified names

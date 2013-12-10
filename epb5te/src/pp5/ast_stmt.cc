@@ -231,6 +231,10 @@ Location* PrintStmt::Emit(CodeGenerator * generator){
 			}
 		}
 		
+		else{
+			generator->GenBuiltInCall(PrintInt, loc);
+		}
+		
 		/*FindDecl(args->Nth()->
 		Type t = args->Nth(i)->GetType();
 		if(t == Type::intType){
