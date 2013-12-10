@@ -356,7 +356,7 @@ Location* FieldAccess::Emit(CodeGenerator* generator){
 	}
 	//this is for a class
 	else{
-		return NULL;
+		return generator->GenLoadConstant(1);
 		/*
 		Type * t = base->GetType();
 		NamedType* btype =  dynamic_cast<NamedType*>(t);
@@ -373,7 +373,7 @@ Location* FieldAccess::Emit(CodeGenerator* generator){
 		}
 		
 	
-	return NULL;
+	return generator->GenLoadConstant(1);
 	
 }
 
