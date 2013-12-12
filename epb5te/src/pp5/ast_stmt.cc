@@ -213,11 +213,11 @@ Location* PrintStmt::Emit(CodeGenerator * generator){
 			generator->GenBuiltInCall(PrintBool, loc);
 		}
 		
-		if(ic){
+		else if(ic){
 			generator->GenBuiltInCall(PrintInt, loc);
 		}
 		
-		if(fa){
+		else if(fa){
 			Decl * dec = fa->FindDecl(fa->field);
 			VarDecl * vdec = dynamic_cast<VarDecl *>(dec);
 			if(vdec){
